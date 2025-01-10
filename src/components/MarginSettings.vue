@@ -13,7 +13,7 @@ const submitForm = (e) => {
 
 <template>
 	<div class="container mx-auto">
-		<button @click="openSettings = true" class="text-sm bg-gray-900 text-white">
+		<button @click="openSettings = true" class="text-sm">
 			Set
 		</button>
 		<Teleport to="body">
@@ -40,7 +40,7 @@ const submitForm = (e) => {
 							<div class="flex items-center justify-between">
 								<label for="mar" class="text-sm font-semibold">Coef. Risk:</label>
 								<div class="flex items-center gap-2">
-									<input id="mar" type="number" v-model="coefRisk" step="1" required
+									<input id="mar" type="number" v-model="coefRisk" step="0.1" required
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>
@@ -48,7 +48,7 @@ const submitForm = (e) => {
 							<div class="flex items-center justify-between">
 								<label for="tp" class="text-sm font-semibold">Coef. TP:</label>
 								<div class="flex items-center gap-2">
-									<input id="tp" type="number" v-model="coefTP" step="0.1" required
+									<input id="tp" type="number" v-model="coefTP" step="0.01" required
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>
@@ -56,7 +56,7 @@ const submitForm = (e) => {
 							<div class="flex items-center justify-between">
 								<label for="sl" class="text-sm font-semibold">Coef. SL:</label>
 								<div class="flex items-center gap-2">
-									<input id="sl" type="number" v-model="coefSL" step="0.1" required
+									<input id="sl" type="number" v-model="coefSL" step="0.01" required
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>
@@ -72,7 +72,7 @@ const submitForm = (e) => {
 							<div class="flex items-center justify-between">
 								<label for="fb" class="text-sm font-semibold">Fee Buy:</label>
 								<div class="flex items-center gap-2">
-									<input id="fb" type="number" v-model="feeBuy" step="0.1" required
+									<input id="fb" type="number" v-model="feeBuy" step="0.005" required
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>
@@ -80,7 +80,7 @@ const submitForm = (e) => {
 							<div class="flex items-center justify-between">
 								<label for="fs" class="text-sm font-semibold">Fee Sell:</label>
 								<div class="flex items-center gap-2">
-									<input id="fs" type="number" v-model="feeSell" step="0.1" required
+									<input id="fs" type="number" v-model="feeSell" step="0.005" required
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>

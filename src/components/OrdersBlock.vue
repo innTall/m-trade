@@ -1,12 +1,15 @@
 <script setup>
-import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import MarginOrder from './MarginOrder.vue';
 import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
 
 const { blocks } = storeToRefs(useOrdersBlockStore());
-const { removeBlock } = useOrdersBlockStore();
+const { removeBlock, addOrderToBlock } = useOrdersBlockStore();
 const handleRemoveBlock = (blockId) => {
 	removeBlock(blockId);
+};
+const handleAddOrder = (blockId) => {
+	addOrderToBlock(blockId);
 };
 </script>
 
@@ -19,9 +22,15 @@ const handleRemoveBlock = (blockId) => {
 				<button @click="handleRemoveBlock(block.id)" class="px-2 font-bold text-red-600 border border-red-600">
 					X
 				</button>
+				<button @click="handleAddOrder(block.id)" class="px-2 font-bold text-green-600 border border-green-600">
+					+
+				</button>
 			</div>
 			<div class="">
-				MarginOrder
+				<!-- Render MarginOrders -->
+				<div v-for="order in block.orders" :key="order.id" class="pb-2">
+					<MarginOrder :block-id="block.id" :order-id="order.id" />
+				</div>
 			</div>
 		</div>
 	</div>

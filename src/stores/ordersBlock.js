@@ -5,28 +5,47 @@ export const useOrdersBlockStore = defineStore(
   "ordersBlock",
   () => {
     let nextBlockId = 1;
-    let nextOrderId = 1;
     const blocks = ref([
       // Default block
       {
         id: nextBlockId++,
         symbol: "",
         isSaved: false,
-        orders: [], // Array to hold orders for this block
+        nextOrderId: 2, // Separate order numbering for this block
+        orders: [
+          {
+            id: 1, // First order starts at 1
+            buyPrice: null,
+            amount: null,
+            slPrice: null,
+            tpPrice: null,
+            selectedSwitch: null,
+          },
+        ], // Array to hold orders for this block
       },
     ]);
     const generateUniqueBlockId = () => nextBlockId++;
-    const generateUniqueOrderId = () => nextOrderId++;
-
+    
     const addBlock = () => {
       // Check if an "empty" block already exists
-      const hasEmptyBlock = blocks.value.some((block) => block.symbol === "");
-      if (!hasEmptyBlock) {
+      //const hasEmptyBlock = blocks.value.some((block) => block.symbol === "");
+      //if (!hasEmptyBlock) {
+      if (!blocks.value.some((block) => block.symbol === "")) {
         blocks.value.unshift({
           id: generateUniqueBlockId(),
           symbol: "",
           isSaved: false,
-          orders: [],
+          nextOrderId: 2, // Reset order numbering for the new block
+          orders: [
+            {
+              id: 1, // First order for this block
+              buyPrice: null,
+              amount: null,
+              slPrice: null,
+              tpPrice: null,
+              selectedSwitch: null,
+            },
+          ],
         });
       }
     };
@@ -41,8 +60,9 @@ export const useOrdersBlockStore = defineStore(
     const addOrderToBlock = (blockId) => {
       const block = blocks.value.find((block) => block.id === blockId);
       if (block) {
+        const newOrderId = block.nextOrderId++;
         block.orders.unshift({
-          id: generateUniqueOrderId(),
+          id: newOrderId, // Use block-specific numbering
           buyPrice: null,
           amount: null,
           slPrice: null,
@@ -64,12 +84,18 @@ export const useOrdersBlockStore = defineStore(
       const block = blocks.value.find((block) => block.id === blockId);
       if (block) {
         const order = block.orders.find((order) => order.id === orderId);
-        if (order) {
+        if (order && key in order) {
           order[key] = value;
         }
       }
     };
 
+    const updateBlockSymbol = (blockId, newSymbol) => {
+      const block = blocks.value.find((b) => b.id === blockId);
+      if (block) {
+        block.symbol = newSymbol;
+      }
+    };
     // Method to scroll to the corresponding block
     const scrollToBlock = (blockId) => {
       const blockElement = document.getElementById(`block-${blockId}`);
@@ -87,6 +113,7 @@ export const useOrdersBlockStore = defineStore(
       scrollToBlock,
       addOrderToBlock,
       removeOrderFromBlock,
+      updateBlockSymbol,
       updateOrder,
     };
   },

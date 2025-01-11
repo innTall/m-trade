@@ -1,38 +1,54 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed, watch } from 'vue';
 import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
-const { removeOrderFromBlock } = useOrdersBlockStore();
+const { removeOrderFromBlock, updateOrder } = useOrdersBlockStore();
+// Props for block and order identification
 const props = defineProps({
 	blockId: Number,
 	orderId: Number,
 });
-const nOrder = ref(null);
+// Reactive data for input fields
 const buyPrice = ref(null);
 const amount = ref(null);
-const buyOrder = buyPrice * amount;
 const slPrice = ref(null);
-const slCost = slPrice * amount;
 const tpPrice = ref(null);
-const tpCost = tpPrice * amount;
 const selectedSwitch = ref(null);
-const handleInputChange = (key, value) => {
-	updateOrder(props.blockId, props.orderId, key, value);
-};
+// Computed properties for calculated values
+const buyOrder = computed(() => (buyPrice.value || 0) * (amount.value || 0));
+const slCost = computed(() => (slPrice.value || 0) * (amount.value || 0));
+const tpCost = computed(() => (tpPrice.value || 0) * (amount.value || 0));
+// Watchers to trigger store updates
+watch(buyPrice, (newVal) => {
+	updateOrder(props.blockId, props.orderId, "buyPrice", newVal);
+});
+watch(amount, (newVal) => {
+	updateOrder(props.blockId, props.orderId, "amount", newVal);
+});
+watch(slPrice, (newVal) => {
+	updateOrder(props.blockId, props.orderId, "slPrice", newVal); // Add for slPrice
+});
+watch(tpPrice, (newVal) => {
+	updateOrder(props.blockId, props.orderId, "tpPrice", newVal); // Add for tpPrice
+});
+
 const handleRemoveOrder = () => {
 	removeOrderFromBlock(props.blockId, props.orderId);
 };
 </script>
 
 <template>
+	<!-- Order Row -->
 	<div class="flex justify-between items-center py-2">
-		<span>{{ nOrder }}</span>
-		<input id="buyPrice" type="number" v-model="buyPrice" placeholder="BuyPrice"
+		<span>{{ orderId }}</span>
+		<input id="buyPrice" type="number" v-model="buyPrice" placeholder="BuyPrice" 
 			class="w-[6ch] bg-gray-900 text-center" />
-		<input id="amount" type="number" v-model="amount" placeholder="Amount" class="w-[6ch] bg-gray-900 text-center" />
+		<input id="amount" type="number" v-model="amount" placeholder="Amount" 
+			class="w-[6ch] bg-gray-900 text-center" />
 		<span class="">{{ buyOrder }}</span>
 		<button id="removeOrder" @click="handleRemoveOrder()"
 			class="flex px-2 font-bold text-red-600 border border-red-600 items-center">x</button>
 	</div>
+	<!-- SL/TP Row -->
 	<div class="flex justify-between items-center pb-2 border-b">
 		<!-- SL Switch -->
 		<div class="flex items-center">

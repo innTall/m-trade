@@ -2,6 +2,7 @@
 import MarginOptions from '../components/MarginOptions.vue';
 import MarginSymbols from '../components/MarginSymbols.vue';
 import OrdersBlock from '../components/OrdersBlock.vue';
+import CandleChart from '../components/CandleChart.vue';
 </script>
 
 <template>
@@ -9,6 +10,7 @@ import OrdersBlock from '../components/OrdersBlock.vue';
 		<MarginOptions />
 		<MarginSymbols class="overflow-x-auto" />
 		<OrdersBlock />
+		<CandleChart />
 	</div>
 </template>
 <style scoped></style>

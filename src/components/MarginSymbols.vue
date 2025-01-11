@@ -2,23 +2,26 @@
 import { storeToRefs } from 'pinia';
 import { useOrdersBlockStore } from "@/stores/ordersBlock.js";
 import { useMarginSymbolsStore } from "@/stores/marginSymbols.js";
+import { useCandleChartStore } from "@/stores/candleChart.js";
 const { symbols, selectedSymbolId } = storeToRefs(useMarginSymbolsStore());
 const { blocks } = storeToRefs(useOrdersBlockStore());
 const { scrollToBlock } = useOrdersBlockStore();
+const { fetchKline } = useCandleChartStore();
 const handleSymbolClick = (symbolId, symbolName) => {
-	if (symbolId === null) {
+	selectedSymbolId.value = symbolId; // Update selected symbol
+	if (symbolName === "empty") {
 		// Handle the explicit "empty" link
 		const emptyBlock = blocks.value.find((block) => block.symbol === "");
 		if (emptyBlock) {
 			scrollToBlock(emptyBlock.id);
-			selectedSymbolId.value = emptyBlock.id; // Highlight the empty block
+			//selectedSymbolId.value = emptyBlock.id; // Highlight the empty block
 		}
-	} else {
-		// Normal symbol click
-		selectedSymbolId.value = symbolId; // Update the selected symbol ID
-		scrollToBlock(symbolId, symbolName); // Perform the scroll action
-		//baseAsset.value = symbolName; // Update the baseAsset in the klinesBybit store
+		return;
 	}
+	// Scroll to the selected block and fetch Kline data
+	scrollToBlock(symbolId); // Perform the scroll action
+	fetchKline(symbolName); // Fetch Kline data for the selected symbol
+	//baseAsset.value = symbolName; // Update the baseAsset in the klinesBybit store
 };
 </script>
 

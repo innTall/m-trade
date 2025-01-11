@@ -1,11 +1,17 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { fetchKlineData } from "@/utils/fetchKlineData.js";
+import { useChartSettingsStore } from "@/stores/chartSettings.js";
 
 export const useCandleChartStore = defineStore("candleChart", () => {
   const klineData = ref(null); // Store fetched Kline data
   const isLoading = ref(false); // Loading state
   const error = ref(null); // Error state
+
+  const chartSettingsStore = useChartSettingsStore();
+  const quoteAsset = computed(() => chartSettingsStore.quoteAsset);
+  const interval = computed(() => chartSettingsStore.interval);
+  const limit = computed(() => chartSettingsStore.limit);
 
   const fetchKline = async (baseAsset) => {
     if (!baseAsset) {
@@ -17,7 +23,12 @@ export const useCandleChartStore = defineStore("candleChart", () => {
     error.value = null;
 
     try {
-      const data = await fetchKlineData(baseAsset);
+      const data = await fetchKlineData(
+        baseAsset,
+        quoteAsset.value,
+        interval.value,
+        limit.value
+      );
       klineData.value = data;
       console.log("Fetched Kline Data:", data);
     } catch (fetchError) {

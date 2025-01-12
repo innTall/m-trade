@@ -11,8 +11,8 @@ export const useMarginSettingsStore = defineStore(
     const coefTP = ref(null);
 		const coefSL = ref(null);
 		const coefOrder = ref(null);
-		const feeBuy = ref(0.02);
-		const feeSell = ref(0.055);
+		const buyFee = ref(0.02);
+		const sellFee = ref(0.055);
 
     // Actions
     const toggleSettings = () => {
@@ -26,8 +26,8 @@ export const useMarginSettingsStore = defineStore(
       if (newSettings.coefTP !== undefined) coefTP.value = newSettings.coefTP;
       if (newSettings.coefSL !== undefined)	coefSL.value = newSettings.coefSL;
 			if (newSettings.coefOrder !== undefined) coefOrder.value = newSettings.coefOrder;
-      if (newSettings.feeBuy !== undefined) feeBuy.value = newSettings.feeBuy;
-      if (newSettings.feeSell !== undefined) feeSell.value = newSettings.feeSell;
+      if (newSettings.buyFee !== undefined) buyFee.value = newSettings.buyFee;
+      if (newSettings.sellFee !== undefined) sellFee.value = newSettings.sellFee;
     };
 
     const resetSettings = () => {
@@ -37,8 +37,8 @@ export const useMarginSettingsStore = defineStore(
       coefTP.value = 0;
 			coefSL.value = 0;
 			coefOrder = 0;
-      feeBuy = 0.02;
-      feeSell = 0.055;
+      buyFee = 0.02;
+      sellFee = 0.055;
     };
 
     return {
@@ -49,8 +49,8 @@ export const useMarginSettingsStore = defineStore(
       coefTP,
 			coefSL,
 			coefOrder,
-      feeBuy,
-      feeSell,
+      buyFee,
+      sellFee,
       toggleSettings,
       setSettings,
       resetSettings,

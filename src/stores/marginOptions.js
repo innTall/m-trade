@@ -24,7 +24,7 @@ export const useMarginOptionsStore = defineStore(
       return +((deposit.value * coefSL.value) / 100).toFixed(2);
     });
 
-    const buyOrderMath = computed(() => {
+    const infoBuyOrder = computed(() => {
       if (!leverage.value || !margin.value) return "0.00";
       return +(leverage.value * parseFloat(margin.value)).toFixed(2);
     });
@@ -33,7 +33,7 @@ export const useMarginOptionsStore = defineStore(
       margin,
       tpCost,
       slCost,
-      buyOrderMath,
+      infoBuyOrder,
     };
   },
   { persist: false }

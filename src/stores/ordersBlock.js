@@ -15,6 +15,7 @@ export const useOrdersBlockStore = defineStore(
         orders: [
           {
             id: 1, // First order starts at 1
+            number: 1, // Order number displayed in the UI
             buyPrice: null,
             amount: null,
             slPrice: null,
@@ -25,7 +26,8 @@ export const useOrdersBlockStore = defineStore(
       },
     ]);
     const generateUniqueBlockId = () => nextBlockId++;
-    
+    //const generateUniqueOrderId = () => nextOrderId++;
+
     const addBlock = () => {
       // Check if an "empty" block already exists
       //const hasEmptyBlock = blocks.value.some((block) => block.symbol === "");
@@ -39,6 +41,7 @@ export const useOrdersBlockStore = defineStore(
           orders: [
             {
               id: 1, // First order for this block
+              number: 1, // Order number displayed in the UI
               buyPrice: null,
               amount: null,
               slPrice: null,
@@ -62,12 +65,17 @@ export const useOrdersBlockStore = defineStore(
       if (block) {
         const newOrderId = block.nextOrderId++;
         block.orders.unshift({
-          id: newOrderId, // Use block-specific numbering
+          id: newOrderId, // Unique order ID
+          number: 1, //block.orders.length + 1, // Assign the correct ordinal number
           buyPrice: null,
           amount: null,
           slPrice: null,
           tpPrice: null,
           selectedSwitch: null,
+        });
+        // Recalculate and reset order numbers for all orders in this block
+        block.orders.forEach((order, index) => {
+          order.number = block.orders.length - index; //index + 1; // Reset numbers starting from 1
         });
       }
     };
@@ -75,7 +83,12 @@ export const useOrdersBlockStore = defineStore(
     const removeOrderFromBlock = (blockId, orderId) => {
       const block = blocks.value.find((block) => block.id === blockId);
       if (block) {
+        // Remove the order
         block.orders = block.orders.filter((order) => order.id !== orderId);
+        // Recalculate and reset order numbers
+        block.orders.forEach((order, index) => {
+          order.number = block.orders.length - index; //index + 1; // Reset the number to match its position
+        });
       }
     };
 

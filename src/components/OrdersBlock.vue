@@ -24,7 +24,7 @@ const { removeBlock, addOrderToBlock, updateBlockSymbol } = useOrdersBlockStore(
 			<div class="max-h-16 overflow-y-auto">
 				<!-- Block MarginOrders -->
 				<div v-for="order in block.orders" :key="order.id" class="pb-2">
-					<MarginOrder :blockId="block.id" :orderId="order.id" />
+					<MarginOrder :blockId="block.id" :orderId="order.id" :orderNumber="order.number" />
 				</div>
 			</div>
 		</div>

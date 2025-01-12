@@ -33,8 +33,8 @@ const handleSymbolClick = (symbolId, symbolName) => {
 			<ul class="flex gap-2">
 				<!-- Link/Button for Each Symbol -->
 				<li v-for="symbol in symbols" :key="symbol.id" @click="handleSymbolClick(symbol.id, symbol.symbol)"
-					class="text-blue-500 cursor-pointer hover:underline uppercase transition"
-					:class="selectedSymbolId === symbol.id ? 'bg-blue-500 text-white rounded px-2' : ''">
+					class="cursor-pointer uppercase transition"
+					:class="selectedSymbolId === symbol.id ? 'font-bold underline px-2' : ''">
 					{{ symbol.symbol }}
 				</li>
 			</ul>

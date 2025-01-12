@@ -105,6 +105,27 @@ watch(tpPrice, (newVal) => {
 const handleRemoveOrder = () => {
 	removeOrderFromBlock(props.blockId, props.orderId);
 };
+
+// ----- Compute balance for the block -----
+const blockOrders = computed(() => {
+	const block = useOrdersBlockStore().blocks.find(block => block.id === props.blockId);
+	return block ? block.orders : [];
+});
+
+const balance = computed(() => {
+	return blockOrders.value.reduce((sum, order) => {
+		if (order.selectedSwitch === 'sl') {
+			sum += parseFloat(order.stopLoss || 0);
+		} else if (order.selectedSwitch === 'tp') {
+			sum += parseFloat(order.takeProfit || 0);
+		}
+		return sum;
+	}, 0).toFixed(2);
+});
+
+const balanceColor = computed(() => {
+	return balance.value < 0 ? 'text-red-500' : balance.value > 0 ? 'text-green-500' : '';
+});
 </script>
 
 <template>
@@ -129,11 +150,11 @@ const handleRemoveOrder = () => {
 		<div class="flex items-center">
 			<input :id="`sl-${blockId}-${orderId}`" type="radio" :name="`switchGroup-${blockId}-${orderId}`"
 				v-model="selectedSwitch" value="sl" class="accent-red-600" />
-			<span class="">SL</span>
+			<span :class="selectedSwitch === 'sl' ? 'text-red-500' : ''">SL</span>
 		</div>
 		<input :id="`slPrice-${blockId}-${orderId}`" type="number" v-model="slPrice" placeholder="SLprice"
-			class="w-[6ch] bg-gray-900 text-center" />
-		<span class="">{{ stopLoss }}</span>
+			:class="`w-[6ch] text-center bg-gray-900 ${selectedSwitch === 'sl' ? 'text-red-500' : ''}`" />
+		<span :class="selectedSwitch === 'sl' ? 'text-red-500' : ''">{{ stopLoss }}</span>
 		<div class="text-gray-500">
 			<span class="text-xs">({{ infoSlPrice }})</span>
 		</div>
@@ -141,13 +162,18 @@ const handleRemoveOrder = () => {
 		<div class="flex items-center">
 			<input :id="`tp-${blockId}-${orderId}`" type="radio" :name="`switchGroup-${blockId}-${orderId}`"
 				v-model="selectedSwitch" value="tp" class="accent-green-600" />
-			<span class="">TP</span>
+			<span :class="selectedSwitch === 'tp' ? 'text-green-500' : ''">TP</span>
 		</div>
 		<input :id="`tpPrice-${blockId}-${orderId}`" type="number" v-model="tpPrice" placeholder="TPprice"
-			class="w-[6ch] bg-gray-900 text-center" />
-		<span class="">{{ takeProfit }}</span>
+			:class="`w-[6ch] text-center bg-gray-900 ${selectedSwitch === 'tp' ? 'text-green-500' : ''}`" />
+		<span :class="selectedSwitch === 'tp' ? 'text-green-500' : ''">{{ takeProfit }}</span>
 		<div class="text-gray-500">
 			<span class="text-xs">({{ infoTpPrice }})</span>
+		</div>
+		<!-- Balance Display -->
+		<div class="flex justify-between items-center py-2">
+			<span>*</span>
+			<span :class="balanceColor">{{ balance }}</span>
 		</div>
 	</div>
 </template>

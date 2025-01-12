@@ -15,13 +15,13 @@ export const useMarginOptionsStore = defineStore(
     });
 
     const tpCost = computed(() => {
-      if (!deposit.value || !coefTP.value) return "0.00";
-      return +((deposit.value * coefTP.value) / 100).toFixed(2);
+      if (!margin.value || !coefTP.value || !leverage.value) return "0.00";
+      return +((margin.value * coefTP.value * leverage.value) / 100).toFixed(2);
     });
 
     const slCost = computed(() => {
-      if (!deposit.value || !coefSL.value) return "0.00";
-      return +((deposit.value * coefSL.value) / 100).toFixed(2);
+      if (!margin.value || !coefSL.value || !leverage.value) return "0.00";
+      return +((margin.value * coefSL.value * leverage.value) / 100).toFixed(2);
     });
 
     const infoBuyOrder = computed(() => {

@@ -3,7 +3,7 @@ import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
 const { openSettings, deposit, leverage, coefRisk, coefTP, coefSL, coefOrder,
-	feeBuy, feeSell, } = storeToRefs(useMarginSettingsStore());
+	buyFee, sellFee, } = storeToRefs(useMarginSettingsStore());
 
 const submitForm = (e) => {
 	e.preventDefault();
@@ -72,7 +72,7 @@ const submitForm = (e) => {
 							<div class="flex items-center justify-between">
 								<label for="fb" class="text-sm font-semibold">Fee Buy:</label>
 								<div class="flex items-center gap-2">
-									<input id="fb" type="number" v-model="feeBuy" step="0.005" required
+									<input id="fb" type="number" v-model="buyFee" step="0.005" required
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>
@@ -80,7 +80,7 @@ const submitForm = (e) => {
 							<div class="flex items-center justify-between">
 								<label for="fs" class="text-sm font-semibold">Fee Sell:</label>
 								<div class="flex items-center gap-2">
-									<input id="fs" type="number" v-model="feeSell" step="0.005" required
+									<input id="fs" type="number" v-model="sellFee" step="0.005" required
 										class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md" />
 									<span>%</span>
 								</div>

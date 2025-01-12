@@ -4,9 +4,12 @@ import { ref, computed, watch } from 'vue';
 import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
 import { useMarginSettingsStore } from "@/stores/marginSettings.js";
 import { useMarginOptionsStore } from "@/stores/marginOptions.js";
+import { useMarginOrdersStore } from "@/stores/marginOrders.js";
 const { removeOrderFromBlock, updateOrder } = useOrdersBlockStore();
 const { leverage, coefOrder, buyFee, sellFee } = storeToRefs(useMarginSettingsStore());
 const { margin, tpCost, slCost, infoBuyOrder } = storeToRefs(useMarginOptionsStore());
+const { calculateMetrics } = storeToRefs(useMarginOrdersStore());
+console.log(calculateMetrics.value);
 // Props for block and order identification
 const props = defineProps({
 	blockId: Number,

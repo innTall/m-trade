@@ -5,12 +5,12 @@ export const useMarginSettingsStore = defineStore(
   "marginSettings",
   () => {
     const openSettings = ref(false);
-    const deposit = ref(null);
-    const leverage = ref(null);
-    const coefRisk = ref(null);
-    const coefTP = ref(null);
-		const coefSL = ref(null);
-		const coefOrder = ref(null);
+    const deposit = ref(100);
+    const leverage = ref(10);
+    const coefRisk = ref(2);
+    const coefTP = ref(3);
+		const coefSL = ref(1);
+		const coefOrder = ref(20);
 		const feeBuy = ref(0.02);
 		const feeSell = ref(0.055);
 
@@ -36,9 +36,9 @@ export const useMarginSettingsStore = defineStore(
       coefRisk.value = 0;
       coefTP.value = 0;
 			coefSL.value = 0;
-			coefOrder = 0;
-      feeBuy = 0.02;
-      feeSell = 0.055;
+			coefOrder.value = 0;
+      feeBuy.value = 0;
+      feeSell.value = 0;
     };
 
     return {

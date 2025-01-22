@@ -17,11 +17,15 @@ export const useOrdersBlockStore = defineStore(
     const generateUniqueBlockId = () => nextBlockId++;
     
     const addBlock = () => {
-      blocks.value.unshift({
-        id: generateUniqueBlockId(),
-        symbol: "",
-        isSaved: false,
-      });
+      // Check if there is already an empty block
+      const hasEmptyBlock = blocks.value.some((block) => block.symbol === "");
+      if (!hasEmptyBlock) {
+        blocks.value.unshift({
+          id: generateUniqueBlockId(),
+          symbol: "",
+          isSaved: false,
+        });
+      }
     };
     
     const removeBlock = (blockId) => {

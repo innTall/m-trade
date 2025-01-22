@@ -3,7 +3,7 @@ import MarginSettings from "./MarginSettings.vue";
 import { storeToRefs } from "pinia";
 import { useMarginSettingsStore } from "@/stores/marginSettings.js";
 import { useMarginOptionsStore } from "@/stores/marginOptions.js";
-import { useOrdersBlockStore } from "@/stores/ordersBlock.js"
+import { useOrdersBlockStore } from "@/stores/ordersBlock.js";
 const { deposit, leverage, coefRisk, coefTP, coefSL } = storeToRefs(useMarginSettingsStore());
 const { margin, tpCost, slCost } = storeToRefs(useMarginOptionsStore());
 const { addBlock } = useOrdersBlockStore();

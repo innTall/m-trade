@@ -28,11 +28,18 @@ export const useOrdersBlockStore = defineStore(
       }
     };
     
+    const ensureDefaultBlock = () => {
+      if (blocks.value.length === 0) {
+        createNewBlock()
+      }
+    };
+
     const removeBlock = (blockId) => {
       // Prevent removing the last block
-      if (blocks.value.length > 1) {
-        blocks.value = blocks.value.filter((block) => block.id !== blockId);
-      }
+      //if (blocks.value.length > 1) {
+      blocks.value = blocks.value.filter((block) => block.id !== blockId);
+      ensureDefaultBlock()
+      //}
     };
 
     // Method to scroll to the corresponding block
@@ -49,6 +56,7 @@ export const useOrdersBlockStore = defineStore(
         setTimeout(() => blockElement.classList.remove("highlight"), 1000);
       }
     };
+    ensureDefaultBlock()
     return {
       blocks,
       addBlock,

@@ -3,9 +3,10 @@ import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
+import SelectSymbol from './SelectSymbol.vue';
 
 // Function to initialize the WebSocket connection
-const initKlineWebSocket = ({ symbol, interval, chart }) => {
+const initKlinesWebSocket = ({ symbol, interval, chart }) => {
   if (ws) {
     ws.close();
     ws = null;
@@ -60,15 +61,13 @@ const getKlines = async ({ symbol, interval, chart }) => {
   // Fetch historical data for the new selection
   const data = await ByBit.getKlines(symbol, interval);
   if (data) {
-    console.log(data)
     chart.setData(parseKlines(data));
   }
 };
 
 const getChartData = async ({ symbol, interval, chart }) => {
-  console.log(symbol, interval)
   await getKlines({ symbol, interval, chart });
-  initKlineWebSocket({ symbol, interval, chart });
+  initKlinesWebSocket({ symbol, interval, chart });
 };
 
 const symbols = ref([])
@@ -144,6 +143,7 @@ onBeforeUnmount(() => {
 <template>
   <div class="flex items-center justify-center">
     <SelectInteval v-model="selectedInterval" />
+    <SelectSymbol v-model="selectedSymbol" />
     <div id="chart" class="w-full h-96"></div>
   </div>
 </template>

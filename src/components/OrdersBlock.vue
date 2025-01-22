@@ -1,16 +1,24 @@
 <script setup>
-import { computed } from 'vue';
+import { computed, watch } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useModalRemoveStore } from '@/stores/modalRemove.js';
 import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
+import { useMarginSymbolsStore } from "@/stores/marginSymbols.js";
 
 const { openDialog } = useModalRemoveStore();
 const { blocks } = storeToRefs(useOrdersBlockStore());
 const { removeBlock } = useOrdersBlockStore();
+const { updateSymbols } = useMarginSymbolsStore();
+
+// Keep symbols updated whenever blocks change
+//watch(blocks, () => {
+//	updateSymbols(blocks.value);
+//});
+
 const handleRemoveBlock = (blockId) => {
-	openDialog("Delete this block?", () => {
+	//openDialog("Delete this block?", () => {
 		removeBlock(blockId);
-	});
+	//});
 };
 </script>
 

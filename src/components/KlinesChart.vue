@@ -1,15 +1,34 @@
 <script setup>
-import { onMounted, onBeforeUnmount } from "vue";
+import { ref, computed, onMounted, onBeforeUnmount, watch } from "vue";
+import { storeToRefs } from "pinia";
+import { useMarginSymbolsStore } from "@/stores/marginSymbols.js";
+import { useOrdersBlockStore } from '@/stores/ordersBlock.js';
 import { createChart } from "lightweight-charts";
 import getKlines from "@/api/bybit/getKlines.js";
 
-const wsUrl = "wss://stream.bybit.com/v5/public/linear";
-const interval = '15';
-const symbol = 'BTCUSDT';
+const { selectedSymbolId } = storeToRefs(useMarginSymbolsStore()); // Watch selected symbol
 
+const interval = '15';
+const baseAsset = ref("BTC"); // Initialize with the default or selected symbol
+const quoteAsset = ref("USDT");
+const symbol = computed(() => `${baseAsset.value.toUpperCase()}${quoteAsset.value.toUpperCase()}`);
+
+
+const wsUrl = "wss://stream.bybit.com/v5/public/linear";
 let ws;
 let chart;
 let candlestickSeries;
+
+// Update `baseAsset` whenever `selectedSymbolId` changes
+watch(
+	() => selectedSymbolId.value,
+	(newSymbolId) => {
+		const { symbols } = useMarginSymbolsStore();
+		const selectedSymbol = symbols.find((s) => s.id === newSymbolId)?.symbol || "BTC";
+		baseAsset.value = selectedSymbol.toUpperCase();
+		console.log(baseAsset.value);
+	}
+);
 
 const parseKlines = ({ result }) => {
 	if (result && result.list) {
@@ -22,6 +41,7 @@ const parseKlines = ({ result }) => {
 				close: parseFloat(kline[4]),
 			}))
 			.sort((a, b) => a.time - b.time);
+			console.log(result)
 	}
 
 	return [];
@@ -49,7 +69,7 @@ onMounted(() => {
 })
 
 onMounted(async () => {
-	const klines = await getKlines(symbol, interval);
+	const klines = await getKlines(symbol.value, interval.value);
 	candlestickSeries.setData(parseKlines(klines));
 });
 
@@ -60,7 +80,7 @@ onMounted(() => {
 		console.log("WebSocket connection opened.");
 		const payload = {
 			op: "subscribe",
-			args: [`kline.${interval}.${symbol}`],
+			args: [`kline.${interval.value}.${symbol.value}`],
 		};
 		ws.send(JSON.stringify(payload));
 	};
@@ -70,7 +90,7 @@ onMounted(() => {
 			const message = JSON.parse(event.data);
 			if (
 				message &&
-				message.topic === `kline.${interval}.${symbol}` &&
+				message.topic === `kline.${interval.value}.${symbol.value}` &&
 				Array.isArray(message.data) &&
 				message.data.length > 0
 			) {
@@ -82,6 +102,7 @@ onMounted(() => {
 					low: parseFloat(rawData.low),
 					close: parseFloat(rawData.close),
 				};
+				console.log(formattedData);
 				candlestickSeries.update(formattedData);
 			}
 		} catch (error) {
@@ -101,7 +122,7 @@ onMounted(() => {
 onBeforeUnmount(() => {
 	if (ws) {
 		ws.close();
-		ws.value = null;
+		ws = null;
 		console.log('WebSocket disconnected');
 	}
 });

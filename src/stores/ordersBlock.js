@@ -34,10 +34,26 @@ export const useOrdersBlockStore = defineStore(
         blocks.value = blocks.value.filter((block) => block.id !== blockId);
       }
     };
+
+    // Method to scroll to the corresponding block
+    const scrollToBlock = (blockId, symbolName = null) => {
+      if (symbolName) {
+        console.log(`Scrolling to block with symbol: ${symbolName}`);
+      } else {
+        console.log(`Scrolling to block with ID: ${blockId}`);
+      }
+      const blockElement = document.getElementById(`block-${blockId}`);
+      if (blockElement) {
+        blockElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        blockElement.classList.add("highlight");
+        setTimeout(() => blockElement.classList.remove("highlight"), 1000);
+      }
+    };
     return {
       blocks,
       addBlock,
       removeBlock,
+      scrollToBlock,
     };
   },
   { persist: false }

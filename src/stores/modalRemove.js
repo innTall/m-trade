@@ -1,9 +1,9 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
-export const useModalRemoveStore = defineStore("modalRemove", () => {
+export const useModalRemoveStore = defineStore('modalRemove', () => {
   const showModalRemove = ref(false);
-  const confirmMessage = ref("");
+  const confirmMessage = ref('');
   let confirmCallback = null;
 
   const openDialog = (message, callback) => {
@@ -23,7 +23,7 @@ export const useModalRemoveStore = defineStore("modalRemove", () => {
 
   const closeDialog = () => {
     showModalRemove.value = false;
-    confirmMessage.value = "";
+    confirmMessage.value = '';
     confirmCallback = null;
   };
 

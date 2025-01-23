@@ -1,9 +1,9 @@
-import getSymbols from "./getSymbols";
-import getKlines from "./getKlines";
+import getSymbols from './getSymbols';
+import getKlines from './getKlines';
 
 const ByBit = {
   getKlines,
-  getSymbols
-}
+  getSymbols,
+};
 
-export default ByBit
+export default ByBit;

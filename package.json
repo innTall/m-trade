@@ -11,9 +11,11 @@
   },
   "dependencies": {
     "@heroicons/vue": "^2.2.0",
+    "@primevue/themes": "^4.2.5",
     "lightweight-charts": "^4.2.2",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^4.2.0",
+    "primevue": "^4.2.5",
     "vue": "^3.4.26",
     "vue-router": "^4.5.0"
   },

@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import { Select } from 'primevue';
 import ByBit from '@/api/bybit';
 
 defineProps(['modelValue']);
@@ -9,7 +10,8 @@ const allSymbols = ref([]);
 
 // Emit the updated interval to the parent
 const onIntervalChange = (event) => {
-  emit('update:modelValue', event.target.value);
+  console.log(event.value);
+  emit('update:modelValue', event.value);
 };
 
 onMounted(async () => {
@@ -20,16 +22,19 @@ onMounted(async () => {
 });
 
 const utaOnlySymbols = computed(() => {
-  return allSymbols.value.filter(
-    ({ marginTrading }) => marginTrading === 'utaOnly'
-  );
+  return allSymbols.value
+    .filter(({ marginTrading }) => marginTrading === 'utaOnly')
+    .map(({ symbol }) => symbol);
 });
 </script>
 
 <template>
-  <select :value="modelValue" @change="onIntervalChange">
-    <option v-for="{ symbol } in utaOnlySymbols" :key="symbol" :value="symbol">
-      {{ symbol }}
-    </option>
-  </select>
+  <Select
+    :value="modelValue"
+    :defaultValue="modelValue"
+    @change="onIntervalChange"
+    :options="utaOnlySymbols"
+    size="small"
+    placeholder="Symbol"
+  />
 </template>

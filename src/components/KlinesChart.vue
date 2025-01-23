@@ -142,7 +142,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div>
-    <div>
+    <div class="flex gap-2 my-1">
       <SelectSymbol v-model="selectedSymbol" />
       <SelectInteval v-model="selectedInterval" />
     </div>

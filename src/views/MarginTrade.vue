@@ -6,11 +6,11 @@ import KlinesChart from '../components/KlinesChart.vue';
 </script>
 
 <template>
-	<div class="flex flex-col h-full">
-		<MarginOptions />
-		<MarginSymbols />
-		<OrdersBlock />
-		<KlinesChart />
-	</div>
+  <div class="flex flex-col h-full">
+    <MarginOptions />
+    <MarginSymbols />
+    <OrdersBlock />
+    <KlinesChart />
+  </div>
 </template>
 <style scoped></style>

@@ -1,4 +1,5 @@
 <script setup>
+import { Select } from 'primevue';
 defineProps(['modelValue']);
 const emit = defineEmits(['update:modelValue']);
 
@@ -18,32 +19,36 @@ const intervals = [
   'W', // 1 week
 ];
 
-const intervalMapper = {
-  1: '1m',
-  3: '3m',
-  5: '5m',
-  15: '15m',
-  30: '30m',
-  60: '1h',
-  120: '2h',
-  240: '4h',
-  360: '6h',
-  720: '12h',
-  D: '1D',
-  M: '1M',
-  W: '1W',
-};
+const intervalMap = new Map([
+  ['1', '1m'],
+  ['3', '3m'],
+  ['5', '5m'],
+  ['15', '15m'],
+  ['30', '30m'],
+  ['60', '1h'],
+  ['120', '2h'],
+  ['240', '4h'],
+  ['360', '6h'],
+  ['720', '12h'],
+  ['D', '1D'],
+  ['M', '1M'],
+  ['W', '1W'],
+]);
 
 // Emit the updated interval to the parent
 const onIntervalChange = (event) => {
-  emit('update:modelValue', event.target.value);
+  emit('update:modelValue', event.value);
 };
 </script>
 
 <template>
-  <select :value="modelValue" @change="onIntervalChange">
-    <option v-for="interval in intervals" :key="interval" :value="interval">
-      {{ intervalMapper[interval] }}
-    </option>
-  </select>
+  <Select
+    :value="modelValue"
+    :defaultValue="modelValue"
+    @change="onIntervalChange"
+    :options="intervals"
+    :optionLabel="(data) => intervalMap.get(data)"
+    size="small"
+    placeholder="Interval"
+  />
 </template>

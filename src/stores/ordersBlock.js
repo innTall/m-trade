@@ -1,36 +1,35 @@
-import { defineStore } from "pinia";
-import { ref } from "vue";
+import { defineStore } from 'pinia';
+import { ref } from 'vue';
 
 export const useOrdersBlockStore = defineStore(
-  "ordersBlock",
+  'ordersBlock',
   () => {
-    
-		let nextBlockId = 1;
+    let nextBlockId = 1;
     const blocks = ref([
       // Default block
       {
         id: nextBlockId++,
-        symbol: "",
+        symbol: '',
         isSaved: false,
       },
     ]);
     const generateUniqueBlockId = () => nextBlockId++;
-    
+
     const addBlock = () => {
       // Check if there is already an empty block
-      const hasEmptyBlock = blocks.value.some((block) => block.symbol === "");
+      const hasEmptyBlock = blocks.value.some((block) => block.symbol === '');
       if (!hasEmptyBlock) {
         blocks.value.unshift({
           id: generateUniqueBlockId(),
-          symbol: "",
+          symbol: '',
           isSaved: false,
         });
       }
     };
-    
+
     const ensureDefaultBlock = () => {
       if (blocks.value.length === 0) {
-        createNewBlock()
+        createNewBlock();
       }
     };
 
@@ -38,7 +37,7 @@ export const useOrdersBlockStore = defineStore(
       // Prevent removing the last block
       //if (blocks.value.length > 1) {
       blocks.value = blocks.value.filter((block) => block.id !== blockId);
-      ensureDefaultBlock()
+      ensureDefaultBlock();
       //}
     };
 
@@ -51,12 +50,12 @@ export const useOrdersBlockStore = defineStore(
       }
       const blockElement = document.getElementById(`block-${blockId}`);
       if (blockElement) {
-        blockElement.scrollIntoView({ behavior: "smooth", block: "center" });
-        blockElement.classList.add("highlight");
-        setTimeout(() => blockElement.classList.remove("highlight"), 1000);
+        blockElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        blockElement.classList.add('highlight');
+        setTimeout(() => blockElement.classList.remove('highlight'), 1000);
       }
     };
-    ensureDefaultBlock()
+    ensureDefaultBlock();
     return {
       blocks,
       addBlock,

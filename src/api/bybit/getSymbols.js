@@ -5,9 +5,13 @@ export default async function getSymbols() {
     path: `/market/instruments-info?category=spot`,
   });
 
-  if (data?.result && Array.isArray(data.result.list) && data.result.list.length) {
-    return data.result.list
-  } else { 
-    return null
+  if (
+    data?.result &&
+    Array.isArray(data.result.list) &&
+    data.result.list.length
+  ) {
+    return data.result.list;
+  } else {
+    return null;
   }
 }

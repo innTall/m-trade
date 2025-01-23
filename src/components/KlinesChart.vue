@@ -60,8 +60,8 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
 const getKlines = async ({ symbol, interval, chart }) => {
   // Fetch historical data for the new selection
   const klines = await ByBit.getKlines(symbol, interval);
-  if (!klines) return
-  
+  if (!klines) return;
+
   chart.setData(parseKlines(klines));
 };
 
@@ -112,13 +112,23 @@ onMounted(() => {
 });
 
 onMounted(async () => {
-  await getChartData({ symbol: selectedSymbol.value, interval: selectedInterval.value, chart: candlestickSeries });
-})
+  await getChartData({
+    symbol: selectedSymbol.value,
+    interval: selectedInterval.value,
+    chart: candlestickSeries,
+  });
+});
 
 // Watchers for symbol and interval changes
 watch([selectedSymbol, selectedInterval], async () => {
-  console.log(`Symbol or interval changed: ${selectedSymbol.value}, ${selectedInterval.value}`);
-  await getChartData({ symbol: selectedSymbol.value, interval: selectedInterval.value, chart: candlestickSeries });
+  console.log(
+    `Symbol or interval changed: ${selectedSymbol.value}, ${selectedInterval.value}`
+  );
+  await getChartData({
+    symbol: selectedSymbol.value,
+    interval: selectedInterval.value,
+    chart: candlestickSeries,
+  });
 });
 
 onBeforeUnmount(() => {

@@ -1,7 +1,12 @@
 import fetchWrapper from './fetchWrapper.js';
 
-export default function getKlines(symbol, interval) {
-  return fetchWrapper({
+export default async function getKlines(symbol, interval) {
+  const data = await fetchWrapper({
     path: `/market/kline?category=linear&symbol=${symbol}&interval=${interval}`,
   });
+  if (data?.result && Array.isArray(data.result.list) && data.result.list.length) {
+    return data.result.list
+  } else { 
+    return null
+  }
 }

@@ -19,19 +19,19 @@ const intervals = [
 ];
 
 const intervalMapper = {
-  "1": "1 Minute",
-  "3": "3 Minutes",
-  "5": "5 Minutes",
-  "15": "15 Minutes",
-  "30": "30 Minutes",
-  "60": "1 Hour",
-  "120": "2 Hours",
-  "240": "4 Hours",
-  "360": "6 Hours",
-  "720": "12 Hours",
-  "D": "1 Day",
-  "M": "1 Month",
-  "W": "1 Week"
+  "1": "1m",
+  "3": "3m",
+  "5": "5m",
+  "15": "15m",
+  "30": "30m",
+  "60": "1h",
+  "120": "2h",
+  "240": "4h",
+  "360": "6h",
+  "720": "12h",
+  "D": "1D",
+  "M": "1M",
+  "W": "1W"
 };
 
 // Emit the updated interval to the parent
@@ -42,13 +42,9 @@ const onIntervalChange = (event) => {
 </script>
 
 <template>
-  <div>
-    <label for="intervals">Select Interval:</label>
-    <select id="intervals" :value="modelValue" @change="onIntervalChange">
-      <option v-for="interval in intervals" :key="interval" :value="interval">
-        {{ intervalMapper[interval] }}
-      </option>
-    </select>
-    <p>Selected Interval: {{ intervalMapper[modelValue] }}</p>
-  </div>
+  <select :value="modelValue" @change="onIntervalChange">
+    <option v-for="interval in intervals" :key="interval" :value="interval">
+      {{ intervalMapper[interval] }}
+    </option>
+  </select>
 </template>

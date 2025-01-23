@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
@@ -59,18 +59,16 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
 
 const getKlines = async ({ symbol, interval, chart }) => {
   // Fetch historical data for the new selection
-  const data = await ByBit.getKlines(symbol, interval);
-  if (data) {
-    chart.setData(parseKlines(data));
-  }
+  const klines = await ByBit.getKlines(symbol, interval);
+  if (!klines) return
+  
+  chart.setData(parseKlines(klines));
 };
 
 const getChartData = async ({ symbol, interval, chart }) => {
   await getKlines({ symbol, interval, chart });
   initKlinesWebSocket({ symbol, interval, chart });
 };
-
-const symbols = ref([])
 
 const selectedSymbol = ref('BTCUSDT');
 const selectedInterval = ref('15');
@@ -80,20 +78,16 @@ let ws;
 let chart;
 let candlestickSeries;
 
-const parseKlines = ({ result }) => {
-  if (result && result.list) {
-    return result.list
-      .map((kline) => ({
-        time: Math.floor(kline[0] / 1000),
-        open: parseFloat(kline[1]),
-        high: parseFloat(kline[2]),
-        low: parseFloat(kline[3]),
-        close: parseFloat(kline[4]),
-      }))
-      .sort((a, b) => a.time - b.time);
-  }
-
-  return [];
+const parseKlines = (klines) => {
+  return klines
+    .map((kline) => ({
+      time: Math.floor(kline[0] / 1000),
+      open: parseFloat(kline[1]),
+      high: parseFloat(kline[2]),
+      low: parseFloat(kline[3]),
+      close: parseFloat(kline[4]),
+    }))
+    .sort((a, b) => a.time - b.time);
 };
 
 onMounted(() => {
@@ -118,10 +112,6 @@ onMounted(() => {
 });
 
 onMounted(async () => {
-  const data = await ByBit.getSymbols();
-  if (Array.isArray(data) && data.length) {
-    symbols.value = data
-  }
   await getChartData({ symbol: selectedSymbol.value, interval: selectedInterval.value, chart: candlestickSeries });
 })
 
@@ -141,9 +131,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div class="flex items-center justify-center">
-    <SelectInteval v-model="selectedInterval" />
-    <SelectSymbol v-model="selectedSymbol" />
+  <div>
+    <div>
+      <SelectSymbol v-model="selectedSymbol" />
+      <SelectInteval v-model="selectedInterval" />
+    </div>
     <div id="chart" class="w-full h-96"></div>
   </div>
 </template>

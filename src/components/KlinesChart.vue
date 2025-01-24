@@ -94,7 +94,7 @@ const parseKlines = (klines) => {
 onMounted(() => {
   chart = createChart(document.getElementById('chart'), {
     width: document.getElementById('chart').clientWidth,
-    height: 400,
+    height: '400',
     layout: {
       backgroundColor: '#ffffff',
       textColor: '#000000',
@@ -148,6 +148,6 @@ onBeforeUnmount(() => {
       <SelectBaseAsset />
       <SelectInteval v-model="selectedInterval" />
     </div>
-    <div id="chart" class="w-full h-96"></div>
+    <div id="chart" class="w-full"></div>
   </div>
 </template>

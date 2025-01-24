@@ -1,7 +1,7 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { Select } from 'primevue';
-import { useSymbolStore } from '../stores/symbolsStore';
+import { useSymbolStore } from '@/stores/symbolStore';
 
 const symbolStore = useSymbolStore();
 const { selectQuote } = symbolStore;

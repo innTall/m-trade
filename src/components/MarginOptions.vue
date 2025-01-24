@@ -10,31 +10,43 @@ const { margin, tpCost, slCost } = storeToRefs(useMarginOptionsStore());
 </script>
 
 <template>
-  <div
-    class="flex justify-between text-center pt-1 pb-1 border-b border-green-600"
-  >
-    <div class="px-2 py-1 border rounded-md items-center hover:bg-gray-700">
+  <div class="p-2 bg-surface-900">
+    <div class="flex flex-row items-center justify-between">
+      <!-- Deposit -->
+      <div>
+        <div class="text-sm text-center">
+          Deposite <span class="font-bold">{{ deposit }}$</span>
+        </div>
+      </div>
+
+      <!-- Leverage -->
+      <div>
+        <div class="text-sm text-center">
+          Leverage <span class="font-bold">{{ leverage }}x</span>
+        </div>
+      </div>
+
+      <!-- Margin -->
+      <div>
+        <div class="text-sm text-center">
+          M-{{ coefRisk }}% <span class="font-bold">{{ margin }}$</span>
+        </div>
+      </div>
+
+      <!-- Take Profit -->
+      <div>
+        <div class="text-sm text-center">
+          TP-{{ coefTP }}% <span class="font-bold">{{ tpCost }}$</span>
+        </div>
+      </div>
+
+      <!-- Stop Loss -->
+      <div>
+        <div class="text-sm text-center">
+          SL-{{ coefSL }}% <span class="font-bold">{{ slCost }}$</span>
+        </div>
+      </div>
       <MarginSettings />
-    </div>
-    <div>
-      <div class="text-xs">Depo</div>
-      <div class="text-sm">{{ deposit }}$</div>
-    </div>
-    <div>
-      <div class="text-xs">Lever</div>
-      <div class="text-sm">{{ leverage }}</div>
-    </div>
-    <div>
-      <div class="text-xs">M-{{ coefRisk }}%</div>
-      <div class="text-sm">{{ margin }}$</div>
-    </div>
-    <div>
-      <div class="text-xs">TP-{{ coefTP }}%</div>
-      <div class="text-sm">{{ tpCost }}$</div>
-    </div>
-    <div>
-      <div class="text-xs">SL-{{ coefSL }}%</div>
-      <div class="text-sm">{{ slCost }}$</div>
     </div>
   </div>
 </template>

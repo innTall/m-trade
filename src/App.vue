@@ -3,7 +3,7 @@ import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import HeaderBar from './components/HeaderBar.vue';
 import FooterBar from './components/FooterBar.vue';
-import { useSymbolStore } from './stores/symbolsStore';
+import { useSymbolStore } from './stores/symbolStore';
 
 // Load initial data
 const symbolStore = useSymbolStore();

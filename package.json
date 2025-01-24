@@ -15,7 +15,9 @@
     "lightweight-charts": "^4.2.2",
     "pinia": "^2.3.0",
     "pinia-plugin-persistedstate": "^4.2.0",
+    "primeicons": "^7.0.0",
     "primevue": "^4.2.5",
+    "tailwindcss-primeui": "^0.4.0",
     "vue": "^3.4.26",
     "vue-router": "^4.5.0"
   },

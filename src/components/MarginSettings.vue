@@ -1,4 +1,5 @@
 <script setup>
+import { Button, Dialog, Divider, InputNumber } from 'primevue';
 import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
@@ -21,154 +22,118 @@ const submitForm = (e) => {
 </script>
 
 <template>
-  <div class="container mx-auto">
-    <button @click="openSettings = true" class="text-sm">Set</button>
-    <Teleport to="body">
-      <div
-        v-if="openSettings"
-        class="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-10"
-      >
-        <div
-          class="bg-gray-900 text-white border rounded-3xl p-4 w-2/3 sm:w-2/3 md:w-1/2 lg:w-1/3 overflow-auto"
-        >
-          <form @submit="submitForm" class="space-y-4">
-            <div class="space-y-3">
-              <div class="flex items-center justify-between">
-                <label for="depo" class="text-sm font-semibold">Deposit:</label>
-                <div class="flex items-center gap-2">
-                  <input
-                    id="depo"
-                    type="number"
-                    v-model="deposit"
-                    step="1"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>$</span>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <label for="lev" class="text-sm font-semibold">Leverage:</label>
-                <div class="flex items-center gap-2">
-                  <input
-                    id="lev"
-                    type="number"
-                    v-model="leverage"
-                    step="1"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>X</span>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <label for="mar" class="text-sm font-semibold"
-                  >Coef. Risk:</label
-                >
-                <div class="flex items-center gap-2">
-                  <input
-                    id="mar"
-                    type="number"
-                    v-model="coefRisk"
-                    step="0.1"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>%</span>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <label for="tp" class="text-sm font-semibold">Coef. TP:</label>
-                <div class="flex items-center gap-2">
-                  <input
-                    id="tp"
-                    type="number"
-                    v-model="coefTP"
-                    step="0.01"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>%</span>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <label for="sl" class="text-sm font-semibold">Coef. SL:</label>
-                <div class="flex items-center gap-2">
-                  <input
-                    id="sl"
-                    type="number"
-                    v-model="coefSL"
-                    step="0.01"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>%</span>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <label for="cord" class="text-sm font-semibold"
-                  >Coef. Order:</label
-                >
-                <div class="flex items-center gap-2">
-                  <input
-                    id="cord"
-                    type="number"
-                    v-model="coefOrder"
-                    step="0.05"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>%</span>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <label for="fb" class="text-sm font-semibold">Fee Buy:</label>
-                <div class="flex items-center gap-2">
-                  <input
-                    id="fb"
-                    type="number"
-                    v-model="feeBuy"
-                    step="0.005"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>%</span>
-                </div>
-              </div>
-              <div class="flex items-center justify-between">
-                <label for="fs" class="text-sm font-semibold">Fee Sell:</label>
-                <div class="flex items-center gap-2">
-                  <input
-                    id="fs"
-                    type="number"
-                    v-model="feeSell"
-                    step="0.005"
-                    required
-                    class="w-20 bg-gray-700 font-bold text-right p-1 rounded-md"
-                  />
-                  <span>%</span>
-                </div>
-              </div>
-            </div>
-            <div class="flex justify-end space-x-3">
-              <button
-                type="button"
-                @click="openSettings = false"
-                class="bg-gray-700 text-white px-3 py-2 rounded-md hover:bg-gray-600"
-              >
-                Close
-              </button>
-              <button
-                type="submit"
-                class="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600"
-              >
-                Submit
-              </button>
-            </div>
-          </form>
+  <div>
+    <Button
+      @click="openSettings = true"
+      icon="pi pi-cog"
+      aria-label="Cog"
+      variant="text"
+      severity="secondary"
+    />
+    <Dialog
+      v-model:visible="openSettings"
+      :modal="true"
+      :closable="false"
+      header="Settings"
+    >
+      <div class="space-y-4">
+        <div class="space-y-3">
+          <div class="flex items-center justify-between gap-4">
+            <label for="depo">Deposit</label>
+            <InputNumber
+              id="depo"
+              v-model="deposit"
+              mode="currency"
+              currency="USD"
+              class="text-right"
+              size="small"
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <label for="lev">Leverage</label>
+            <InputNumber
+              id="lev"
+              v-model="leverage"
+              suffix="x"
+              class="text-right"
+              size="small"
+            />
+          </div>
+          <div class="flex justify-center text-sm">Coeficients</div>
+          <Divider />
+          <div class="flex items-center justify-between gap-4">
+            <label for="mar">Risk</label>
+            <InputNumber
+              id="mar"
+              v-model="coefRisk"
+              suffix="%"
+              class="text-right"
+              size="small"
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <label for="tp">TP</label>
+            <InputNumber
+              id="tp"
+              v-model="coefTP"
+              suffix="%"
+              class="text-right"
+              size="small"
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <label for="sl">SL</label>
+            <InputNumber
+              id="sl"
+              v-model="coefSL"
+              suffix="%"
+              class="text-right"
+              size="small"
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <label for="cord">Order</label>
+            <InputNumber
+              id="cord"
+              v-model="coefOrder"
+              suffix="%"
+              class="text-right"
+              size="small"
+            />
+          </div>
+          <div class="flex justify-center text-sm">Fees</div>
+          <Divider />
+          <div class="flex items-center justify-between">
+            <label for="fb">Buy</label>
+            <InputNumber
+              id="fb"
+              v-model="feeBuy"
+              suffix="%"
+              class="text-right"
+              size="small"
+            />
+          </div>
+          <div class="flex items-center justify-between">
+            <label for="fs">Sell</label>
+            <InputNumber
+              id="fs"
+              v-model="feeSell"
+              suffix="%"
+              class="text-right"
+              size="small"
+            />
+          </div>
+        </div>
+        <div class="flex justify-end gap-4">
+          <Button
+            @click="openSettings = false"
+            label="Close"
+            severity="secondary"
+          />
+          <Button @click="handleSubmit" label="Submit" />
         </div>
       </div>
-    </Teleport>
+    </Dialog>
   </div>
 </template>
 <style scoped></style>

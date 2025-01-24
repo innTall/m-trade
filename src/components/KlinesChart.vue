@@ -1,10 +1,12 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
 import SelectBaseAsset from './SelectBaseAsset.vue';
 import SelectQuoteAsset from './SelectQuoteAsset.vue';
+import { useSymbolStore } from '@/stores/symbolStore';
 
 // Function to initialize the WebSocket connection
 const initKlinesWebSocket = ({ symbol, interval, chart }) => {
@@ -71,7 +73,9 @@ const getChartData = async ({ symbol, interval, chart }) => {
   initKlinesWebSocket({ symbol, interval, chart });
 };
 
-const selectedSymbol = ref('BTCUSDT');
+const symbolStore = useSymbolStore();
+const { selectedSymbol } = storeToRefs(symbolStore);
+
 const selectedInterval = ref('15');
 
 const wsUrl = 'wss://stream.bybit.com/v5/public/linear';
@@ -114,23 +118,26 @@ onMounted(() => {
 
 onMounted(async () => {
   await getChartData({
-    symbol: selectedSymbol.value,
+    symbol: selectedSymbol.symbol || 'BTCUSDT',
     interval: selectedInterval.value,
     chart: candlestickSeries,
   });
 });
 
 // Watchers for symbol and interval changes
-watch([selectedSymbol, selectedInterval], async () => {
-  console.log(
-    `Symbol or interval changed: ${selectedSymbol.value}, ${selectedInterval.value}`
-  );
-  await getChartData({
-    symbol: selectedSymbol.value,
-    interval: selectedInterval.value,
-    chart: candlestickSeries,
-  });
-});
+watch(
+  [selectedSymbol, selectedInterval],
+  async ([newSymbol, newInterval], [oldSymbol, oldInterval]) => {
+    console.log(
+      `Symbol or interval changed: ${newSymbol.symbol}, ${newInterval}`
+    );
+    await getChartData({
+      symbol: newSymbol.symbol || 'BTCUSDT',
+      interval: newInterval,
+      chart: candlestickSeries,
+    });
+  }
+);
 
 onBeforeUnmount(() => {
   if (ws) {

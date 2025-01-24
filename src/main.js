@@ -2,12 +2,13 @@ import { createApp } from 'vue';
 import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import PrimeVue from 'primevue/config';
-import Nora from '@primevue/themes/nora';
+import Aura from '@primevue/themes/aura';
 
 import App from './App.vue';
 import router from './router/index.js';
 import { setupServiceWorker } from './registerServiceWorker.js';
 
+import 'primeicons/primeicons.css';
 import './style.css';
 
 const app = createApp(App);
@@ -20,7 +21,7 @@ setupServiceWorker(); // Register the Service Worker
 app
   .use(PrimeVue, {
     theme: {
-      preset: Nora,
+      preset: Aura,
     },
   })
   .use(pinia)

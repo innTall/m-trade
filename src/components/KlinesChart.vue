@@ -3,7 +3,8 @@ import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
-import SelectSymbol from './SelectSymbol.vue';
+import SelectBaseAsset from './SelectBaseAsset.vue';
+import SelectQuoteAsset from './SelectQuoteAsset.vue';
 
 // Function to initialize the WebSocket connection
 const initKlinesWebSocket = ({ symbol, interval, chart }) => {
@@ -143,7 +144,8 @@ onBeforeUnmount(() => {
 <template>
   <div>
     <div class="flex gap-2 my-1">
-      <SelectSymbol v-model="selectedSymbol" />
+      <SelectQuoteAsset />
+      <SelectBaseAsset />
       <SelectInteval v-model="selectedInterval" />
     </div>
     <div id="chart" class="w-full h-96"></div>

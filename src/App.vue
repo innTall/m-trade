@@ -1,6 +1,20 @@
 <script setup>
+import { onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import HeaderBar from './components/HeaderBar.vue';
 import FooterBar from './components/FooterBar.vue';
+import { useSymbolStore } from './stores/symbolsStore';
+
+// Load initial data
+const symbolStore = useSymbolStore();
+const { fetchSymbols } = symbolStore;
+const { symbols } = storeToRefs(symbolStore);
+
+onMounted(async () => {
+  if (!symbols.length) {
+    await fetchSymbols();
+  }
+});
 </script>
 
 <template>

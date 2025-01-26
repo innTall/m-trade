@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 export const useMarginSettingsStore = defineStore(
   'marginSettings',
   () => {
-    const openSettings = ref(false);
     const deposit = ref(100);
     const leverage = ref(10);
     const coefRisk = ref(2);
@@ -13,11 +12,6 @@ export const useMarginSettingsStore = defineStore(
     const coefOrder = ref(20);
     const feeBuy = ref(0.02);
     const feeSell = ref(0.055);
-
-    // Actions
-    const toggleSettings = () => {
-      openSettings.value = !openSettings.value;
-    };
 
     const setSettings = (newSettings) => {
       if (newSettings.deposit !== undefined)
@@ -46,8 +40,12 @@ export const useMarginSettingsStore = defineStore(
       feeSell.value = 0;
     };
 
+    const buyOrderMath = computed(() => {
+      if (!leverage.value || !margin.value) return '0.00';
+      return +(leverage.value * parseFloat(margin.value)).toFixed(2);
+    });
+
     return {
-      openSettings,
       deposit,
       leverage,
       coefRisk,
@@ -56,7 +54,7 @@ export const useMarginSettingsStore = defineStore(
       coefOrder,
       feeBuy,
       feeSell,
-      toggleSettings,
+      buyOrderMath,
       setSettings,
       resetSettings,
     };

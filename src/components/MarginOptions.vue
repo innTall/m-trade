@@ -1,53 +1,82 @@
 <script setup>
-import MarginSettings from './MarginSettings.vue';
+import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
+import MarginSettings from './MarginSettings.vue';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
-import { useMarginOptionsStore } from '@/stores/marginOptions.js';
+
 const { deposit, leverage, coefRisk, coefTP, coefSL } = storeToRefs(
   useMarginSettingsStore()
 );
-const { margin, tpCost, slCost } = storeToRefs(useMarginOptionsStore());
+
+// Computed properties for calculations
+const margin = computed(() => {
+  if (!deposit.value || !coefRisk.value) return '0.00';
+  return +((deposit.value * coefRisk.value) / 100).toFixed(2);
+});
+
+const tpCost = computed(() => {
+  if (!margin.value || !leverage.value || !coefTP.value) return '0.00';
+  return +((margin.value * leverage.value * coefTP.value) / 100).toFixed(2);
+});
+
+const slCost = computed(() => {
+  if (!margin.value || !leverage.value || !coefSL.value) return '0.00';
+  return +((margin.value * leverage.value * coefSL.value) / 100).toFixed(2);
+});
 </script>
 
 <template>
-  <div class="p-2 bg-surface-900">
-    <div class="flex flex-row items-center justify-between">
-      <!-- Deposit -->
-      <div>
-        <div class="text-sm text-center">
-          Deposite <span class="font-bold">{{ deposit }}$</span>
-        </div>
+  <div class="flex flex-row items-center justify-between">
+    <!-- Deposit -->
+    <div>
+      <div class="text-sm">
+        Deposite
       </div>
+      <div class="text-sm font-bold text-center">
+        {{ deposit }}$
+      </div>
+    </div>
 
-      <!-- Leverage -->
-      <div>
-        <div class="text-sm text-center">
-          Leverage <span class="font-bold">{{ leverage }}x</span>
-        </div>
+    <!-- Leverage -->
+    <div>
+      <div class="text-sm">
+        Leverage
       </div>
+      <div class="text-sm font-bold text-center">
+        {{ leverage }}x
+      </div>
+    </div>
 
-      <!-- Margin -->
-      <div>
-        <div class="text-sm text-center">
-          M-{{ coefRisk }}% <span class="font-bold">{{ margin }}$</span>
-        </div>
+    <!-- Margin -->
+    <div>
+      <div class="text-sm">
+        M-{{ coefRisk }}%
       </div>
+      <div class="text-sm font-bold text-center">
+        {{ margin }}$
+      </div>
+    </div>
 
-      <!-- Take Profit -->
-      <div>
-        <div class="text-sm text-center">
-          TP-{{ coefTP }}% <span class="font-bold">{{ tpCost }}$</span>
-        </div>
+    <!-- Take Profit -->
+    <div>
+      <div class="text-sm">
+        TP-{{ coefTP }}%
       </div>
+      <div class="text-sm font-bold text-center">
+        {{ tpCost }}$
+      </div>
+    </div>
 
-      <!-- Stop Loss -->
-      <div>
-        <div class="text-sm text-center">
-          SL-{{ coefSL }}% <span class="font-bold">{{ slCost }}$</span>
-        </div>
+    <!-- Stop Loss -->
+    <div>
+      <div class="text-sm">
+        SL-{{ coefSL }}%
       </div>
-      <MarginSettings />
+      <div class="text-sm font-bold text-center">
+        {{ slCost }}$
+      </div>
     </div>
   </div>
 </template>
+
 <style scoped></style>

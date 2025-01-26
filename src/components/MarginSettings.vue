@@ -1,10 +1,10 @@
 <script setup>
+import { ref } from 'vue'; 
 import { Button, Dialog, Divider, InputNumber } from 'primevue';
 import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
 const {
-  openSettings,
   deposit,
   leverage,
   coefRisk,
@@ -15,23 +15,31 @@ const {
   feeSell,
 } = storeToRefs(useMarginSettingsStore());
 
-const submitForm = (e) => {
-  e.preventDefault();
-  console.log('Form Submitted');
-};
+const isOpen = ref(false);
+const open = () => {
+  isOpen.value = true;
+}
+
+const close = () => {
+  isOpen.value = false;
+}
+
+const submit = () => {
+  close();
+}
 </script>
 
 <template>
   <div>
     <Button
-      @click="openSettings = true"
+      @click="open"
       icon="pi pi-cog"
       aria-label="Cog"
       variant="text"
       severity="secondary"
     />
     <Dialog
-      v-model:visible="openSettings"
+      v-model:visible="isOpen"
       :modal="true"
       :closable="false"
       header="Settings"
@@ -126,11 +134,11 @@ const submitForm = (e) => {
         </div>
         <div class="flex justify-end gap-4">
           <Button
-            @click="openSettings = false"
+            @click="close"
             label="Close"
             severity="secondary"
           />
-          <Button @click="handleSubmit" label="Submit" />
+          <Button @click="submit" label="Submit" />
         </div>
       </div>
     </Dialog>

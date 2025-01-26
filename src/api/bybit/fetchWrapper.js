@@ -1,5 +1,5 @@
 export default async function fetchWrapper({ path, options = {} }) {
-  const url = `https://api.bybit.com/v5${path}`;
+  const url = `https://api-testnet.bybit.com/v5${path}`;
   try {
     const response = await fetch(url, {
       ...options,

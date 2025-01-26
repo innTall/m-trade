@@ -13,7 +13,7 @@ export const useMarginSettingsStore = defineStore(
     const feeBuy = ref(0.02);
     const feeSell = ref(0.055);
 
-    const setSettings = (newSettings) => {
+    const setSettings = newSettings => {
       if (newSettings.deposit !== undefined)
         deposit.value = newSettings.deposit;
       if (newSettings.leverage !== undefined)

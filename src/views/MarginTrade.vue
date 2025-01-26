@@ -6,7 +6,7 @@ import MarginSettings from '../components/MarginSettings.vue';
 
 <template>
   <div>
-    <div  class="flex p-2 bg-surface-800 gap-2">
+    <div class="flex p-2 bg-surface-800 gap-2">
       <div class="flex-grow">
         <MarginOptions />
       </div>

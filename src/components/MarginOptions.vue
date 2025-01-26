@@ -1,7 +1,6 @@
 <script setup>
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import MarginSettings from './MarginSettings.vue';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
 const { deposit, leverage, coefRisk, coefTP, coefSL } = storeToRefs(
@@ -29,52 +28,32 @@ const slCost = computed(() => {
   <div class="flex flex-row items-center justify-between">
     <!-- Deposit -->
     <div>
-      <div class="text-sm">
-        Deposite
-      </div>
-      <div class="text-sm font-bold text-center">
-        {{ deposit }}$
-      </div>
+      <div class="text-sm">Deposite</div>
+      <div class="text-sm font-bold text-center">{{ deposit }}$</div>
     </div>
 
     <!-- Leverage -->
     <div>
-      <div class="text-sm">
-        Leverage
-      </div>
-      <div class="text-sm font-bold text-center">
-        {{ leverage }}x
-      </div>
+      <div class="text-sm">Leverage</div>
+      <div class="text-sm font-bold text-center">{{ leverage }}x</div>
     </div>
 
     <!-- Margin -->
     <div>
-      <div class="text-sm">
-        M-{{ coefRisk }}%
-      </div>
-      <div class="text-sm font-bold text-center">
-        {{ margin }}$
-      </div>
+      <div class="text-sm">M-{{ coefRisk }}%</div>
+      <div class="text-sm font-bold text-center">{{ margin }}$</div>
     </div>
 
     <!-- Take Profit -->
     <div>
-      <div class="text-sm">
-        TP-{{ coefTP }}%
-      </div>
-      <div class="text-sm font-bold text-center">
-        {{ tpCost }}$
-      </div>
+      <div class="text-sm">TP-{{ coefTP }}%</div>
+      <div class="text-sm font-bold text-center">{{ tpCost }}$</div>
     </div>
 
     <!-- Stop Loss -->
     <div>
-      <div class="text-sm">
-        SL-{{ coefSL }}%
-      </div>
-      <div class="text-sm font-bold text-center">
-        {{ slCost }}$
-      </div>
+      <div class="text-sm">SL-{{ coefSL }}%</div>
+      <div class="text-sm font-bold text-center">{{ slCost }}$</div>
     </div>
   </div>
 </template>

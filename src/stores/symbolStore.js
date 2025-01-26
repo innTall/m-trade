@@ -38,7 +38,7 @@ export const useSymbolStore = defineStore('symbolStore', () => {
 
   const quoteAssets = computed(() => {
     return Array.from(
-      new Set(marginTradingSymbols.value.map((item) => item.quoteCoin))
+      new Set(marginTradingSymbols.value.map(item => item.quoteCoin))
     );
   });
 
@@ -49,24 +49,24 @@ export const useSymbolStore = defineStore('symbolStore', () => {
     });
   });
 
-  const selectQuote = (quote) => {
+  const selectQuote = quote => {
     selectedQuote.value = quote;
   };
 
-  const selectSymbol = (symbol) => {
+  const selectSymbol = symbol => {
     selectedSymbol.value = symbol;
   };
 
   watch(
     () => quoteAssets.value,
-    (newValue) => {
+    newValue => {
       selectedQuote.value = newValue[0];
     }
   );
 
   watch(
     () => symbolsByQuote.value,
-    (newValue) => {
+    newValue => {
       selectedSymbol.value = newValue[0];
     }
   );

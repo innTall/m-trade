@@ -11,7 +11,7 @@ const accountStore = useAccountStore();
 const { fetchSymbols } = symbolStore;
 const { fetchAccount } = accountStore;
 const { symbols } = storeToRefs(symbolStore);
-const {account} = storeToRefs(accountStore);
+const { account } = storeToRefs(accountStore);
 
 onMounted(async () => {
   if (!symbols.length) {

@@ -36,7 +36,7 @@ const intervalMap = new Map([
 ]);
 
 // Emit the updated interval to the parent
-const onIntervalChange = (event) => {
+const onIntervalChange = event => {
   emit('update:modelValue', event.value);
 };
 </script>
@@ -47,7 +47,7 @@ const onIntervalChange = (event) => {
     :defaultValue="modelValue"
     @change="onIntervalChange"
     :options="intervals"
-    :optionLabel="(data) => intervalMap.get(data)"
+    :optionLabel="data => intervalMap.get(data)"
     size="small"
     placeholder="Interval"
   />

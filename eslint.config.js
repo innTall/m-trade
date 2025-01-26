@@ -18,7 +18,7 @@ export default [
     },
     rules: {
       // Define additional custom rules if needed
-      "endOfLine": "lf"
+      endOfLine: 'lf',
     },
   },
   // JavaScript Recommended Config

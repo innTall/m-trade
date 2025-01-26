@@ -12,7 +12,7 @@ const { symbolsByQuote, loading, selectedSymbol } = storeToRefs(symbolStore);
   <Select
     :value="selectedSymbol"
     :defaultValue="selectedSymbol"
-    @change="(event) => selectSymbol(event.value)"
+    @change="event => selectSymbol(event.value)"
     :options="symbolsByQuote"
     optionLabel="baseCoin"
     size="small"

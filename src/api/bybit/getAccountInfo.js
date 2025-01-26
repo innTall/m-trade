@@ -15,33 +15,39 @@ async function generateSignature(secretKey, payload) {
 
   // Sign the payload
   const payloadData = encoder.encode(payload);
-  const signatureBuffer = await crypto.subtle.sign('HMAC', cryptoKey, payloadData);
+  const signatureBuffer = await crypto.subtle.sign(
+    'HMAC',
+    cryptoKey,
+    payloadData
+  );
 
   // Convert the ArrayBuffer to a hexadecimal string
   const signatureArray = Array.from(new Uint8Array(signatureBuffer));
-  const signatureHex = signatureArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  const signatureHex = signatureArray
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
 
   return signatureHex;
 }
 
 export default async function getAccountInfo() {
-  const apiKey = "";
-  const secretKey = ""
-  const query = "accountType=UNIFIED";
+  const apiKey = '';
+  const secretKey = '';
+  const query = 'accountType=UNIFIED';
   const timestamp = Date.now().toString();
-  const recvWindow = "5000";
+  const recvWindow = '5000';
   const payload = `${timestamp}${apiKey}${recvWindow}${query}`;
   const signature = await generateSignature(secretKey, payload);
   const data = await fetchWrapper({
     path: `/account/wallet-balance?${query}`,
     options: {
       headers: {
-        "X-BAPI-SIGN": signature,
-        "X-BAPI-API-KEY": apiKey,
+        'X-BAPI-SIGN': signature,
+        'X-BAPI-API-KEY': apiKey,
         'X-BAPI-TIMESTAMP': timestamp,
         'X-BAPI-RECV-WINDOW': recvWindow,
-      }
-    }
+      },
+    },
   });
 
   if (

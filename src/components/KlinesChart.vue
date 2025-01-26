@@ -27,7 +27,7 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
     ws.send(JSON.stringify(payload));
   };
 
-  ws.onmessage = (event) => {
+  ws.onmessage = event => {
     try {
       const message = JSON.parse(event.data);
       if (
@@ -55,7 +55,7 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
     console.log('WebSocket connection closed.');
   };
 
-  ws.onerror = (error) => {
+  ws.onerror = error => {
     console.error('WebSocket error:', error);
   };
 };
@@ -83,9 +83,9 @@ let ws;
 let chart;
 let candlestickSeries;
 
-const parseKlines = (klines) => {
+const parseKlines = klines => {
   return klines
-    .map((kline) => ({
+    .map(kline => ({
       time: Math.floor(kline[0] / 1000),
       open: parseFloat(kline[1]),
       high: parseFloat(kline[2]),

@@ -15,9 +15,7 @@ const { usdtBalance } = storeToRefs(accountStore);
     <div>
       Balance: <span class="font-bold">${{ usdtBalance }}</span>
     </div>
-    <div>
-      Market: <SelectQuoteAsset />
-    </div>
+    <div>Market: <SelectQuoteAsset /></div>
   </div>
 </template>
 <style scoped></style>

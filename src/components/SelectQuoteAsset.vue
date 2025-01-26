@@ -12,7 +12,7 @@ const { quoteAssets, loading, selectedQuote } = storeToRefs(symbolStore);
   <Select
     :value="selectedQuote"
     :defaultValue="selectedQuote"
-    @change="(event) => selectQuote(event.value)"
+    @change="event => selectQuote(event.value)"
     :options="quoteAssets"
     size="small"
     placeholder="Quote"

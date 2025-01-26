@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'; 
+import { ref } from 'vue';
 import { Button, Dialog, Divider, InputNumber } from 'primevue';
 import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
@@ -18,15 +18,15 @@ const {
 const isOpen = ref(false);
 const open = () => {
   isOpen.value = true;
-}
+};
 
 const close = () => {
   isOpen.value = false;
-}
+};
 
 const submit = () => {
   close();
-}
+};
 </script>
 
 <template>
@@ -133,11 +133,7 @@ const submit = () => {
           </div>
         </div>
         <div class="flex justify-end gap-4">
-          <Button
-            @click="close"
-            label="Close"
-            severity="secondary"
-          />
+          <Button @click="close" label="Close" severity="secondary" />
           <Button @click="submit" label="Submit" />
         </div>
       </div>

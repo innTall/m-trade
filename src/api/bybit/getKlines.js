@@ -1,8 +1,11 @@
 import fetchWrapper from './fetchWrapper.js';
 
 export default async function getKlines(symbol, interval) {
+  const path = '/market/kline';
+  const query = `category=spot&symbol=${symbol}&interval=${interval}`;
   const data = await fetchWrapper({
-    path: `/market/kline?category=spot&symbol=${symbol}&interval=${interval}`,
+    path,
+    query,
   });
   if (
     data?.result &&

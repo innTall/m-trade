@@ -7,7 +7,7 @@ const ByBit = {
   getKlines,
   getSymbols,
   getAccountInfo,
-  placeOrder
+  placeOrder,
 };
 
 export default ByBit;

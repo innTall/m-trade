@@ -1,11 +1,11 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { storeToRefs } from 'pinia';
+import { Button } from 'primevue';
 import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
 import SelectBaseAsset from './SelectBaseAsset.vue';
-import SelectQuoteAsset from './SelectQuoteAsset.vue';
 import { useSymbolStore } from '@/stores/symbolStore';
 
 // Function to initialize the WebSocket connection
@@ -151,10 +151,12 @@ onBeforeUnmount(() => {
 <template>
   <div>
     <div class="flex gap-2 my-1">
-      <SelectQuoteAsset />
       <SelectBaseAsset />
       <SelectInteval v-model="selectedInterval" />
     </div>
     <div id="chart" class="w-full"></div>
+    <div class="flex justify-between p-1 gap-2">
+      <Button label="Place Order" class="w-full" size="small" />
+    </div>
   </div>
 </template>

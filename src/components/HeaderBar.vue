@@ -1,23 +1,14 @@
 <script setup>
-import LogoItem from './layouts/LogoItem.vue';
+import SelectQuoteAsset from './SelectQuoteAsset.vue';
 </script>
 
 <template>
-  <div class="flex justify-between border-b border-green-600 pb-2">
+  <div class="flex items-center justify-between p-1">
     <div>
-      <LogoItem />
+      <img src="/pwa-64x64.png" alt="Logo" width="32" />
     </div>
-    <div class="flex justify-between text-sm">
-      <div class="text-center">
-        <div class="">Bybit</div>
-        <RouterLink :to="{ name: 'MarginTrade' }" v-slot="{ isActive }">
-          <span
-            :class="[isActive ? 'text-blue-500 font-bold' : 'text-gray-500']"
-          >
-            Margin
-          </span>
-        </RouterLink>
-      </div>
+    <div>
+      <SelectQuoteAsset />
     </div>
   </div>
 </template>

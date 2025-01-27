@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Button } from 'primevue';
 import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
@@ -78,7 +77,7 @@ const { selectedSymbol } = storeToRefs(symbolStore);
 
 const selectedInterval = ref('15');
 
-const wsUrl = 'wss://stream.bybit.com/v5/public/linear';
+const wsUrl = 'wss://stream-testnet.bybit.com/v5/public/linear';
 let ws;
 let chart;
 let candlestickSeries;
@@ -155,8 +154,5 @@ onBeforeUnmount(() => {
       <SelectInteval v-model="selectedInterval" />
     </div>
     <div id="chart" class="w-full"></div>
-    <div class="flex justify-between p-1 gap-2">
-      <Button label="Place Order" class="w-full" size="small" />
-    </div>
   </div>
 </template>

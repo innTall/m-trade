@@ -1,7 +1,9 @@
 <script setup>
-import MarginOptions from '../components/MarginOptions.vue';
-import KlinesChart from '../components/KlinesChart.vue';
-import MarginSettings from '../components/MarginSettings.vue';
+import MarginOptions from '@/components/MarginOptions.vue';
+import KlinesChart from '@/components/KlinesChart.vue';
+import MarginSettings from '@/components/MarginSettings.vue';
+import OrderList from '@/components/OrderList.vue';
+import PlaceOrder from '@/components/PlaceOrder.vue';
 </script>
 
 <template>
@@ -15,6 +17,8 @@ import MarginSettings from '../components/MarginSettings.vue';
       </div>
     </div>
     <KlinesChart />
+    <PlaceOrder />
+    <OrderList />
   </div>
 </template>
 <style scoped></style>

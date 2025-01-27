@@ -28,6 +28,13 @@ async function generateSignature(secretKey, payload) {
   return signatureHex;
 }
 
+function queryFromParams(params) {
+  return Object.keys(params)
+    .sort()
+    .map(key => `${key}=${params[key]}`)
+    .join('&');
+}
+
 async function prepareAuthHeaders({ apiKey, secretKey, query }) {
   const timestamp = Date.now().toString();
   const recvWindow = '5000';
@@ -42,4 +49,4 @@ async function prepareAuthHeaders({ apiKey, secretKey, query }) {
   };
 }
 
-export { prepareAuthHeaders };
+export { prepareAuthHeaders, queryFromParams };

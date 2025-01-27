@@ -1,3 +1,4 @@
+import fetchWrapper from './fetchWrapper';
 // https://bybit-exchange.github.io/docs/v5/order/create-order
 export default async function placeOrder({
   symbol,
@@ -7,11 +8,9 @@ export default async function placeOrder({
   takeProfit,
   stopLoss,
 }) {
-  const path = '/order/createe';
-  const query = 'accountType=UNIFIED';
+  const path = '/order/create';
   const data = await fetchWrapper({
     path,
-    query,
     isPrivate: true,
     method: 'POST',
     body: JSON.stringify({

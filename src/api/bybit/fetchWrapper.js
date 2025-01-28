@@ -3,8 +3,8 @@ import { prepareAuthHeaders } from './utils';
 // this should be userCOnfig
 const isTest = true;
 // this should be from some secure storage
-const apiKey = 'yrQkjPjnK6C3GmesKu';
-const secretKey = 'RYFN0RV43vWf7Y2TjCbrJRJLygNQEePgWd0W';
+const apiKey = '';
+const secretKey = '';
 
 export default async function fetchWrapper({
   path,

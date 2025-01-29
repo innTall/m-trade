@@ -6,8 +6,8 @@ export default async function cancelOrder({ symbol, orderId }) {
     path,
     isPrivate: true,
     method: 'POST',
-    doby: JSON.stringify({
-      category: 'linear',
+    body: JSON.stringify({
+      category: 'spot',
       symbol,
       orderId,
     }),

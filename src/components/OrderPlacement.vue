@@ -1,7 +1,9 @@
 <script setup>
 import { ref, computed, watch } from 'vue';
+import { storeToRefs } from 'pinia';
 import { Button, InputNumber, SelectButton } from 'primevue';
 import MarginSettings from './MarginSettings.vue';
+import { useSymbolStore } from '@/stores/symbolStore';
 
 const DEFAULT_SETTINGS = {
   deposit: 100,
@@ -14,13 +16,16 @@ const DEFAULT_SETTINGS = {
   feeSell: 0.055,
 };
 
+const symbolStore = useSymbolStore();
+const { selectedSymbol, loading } = storeToRefs(symbolStore);
+
 // Reactive state
 const settings = ref({ ...DEFAULT_SETTINGS });
 
 const order = ref({
   side: "Buy",
   buyPrice: null,
-  amount: null,
+  budget: null,
   slPrice: null,
   tpPrice: null,
 });
@@ -48,7 +53,13 @@ const feeBuyValue = computed(() => settings.value.feeBuy / 100);
 const feeSellValue = computed(() => settings.value.feeSell / 100);
 const ratio = computed(() => 1 + settings.value.coefOrder / 100);
 const orderSize = computed(() => (margin.value * settings.value.leverage).toFixed(2));
-const slVolume = computed(() => ((settings.value.coefSL + settings.value.feeSell) / 100).toFixed(5));
+const slVolume = computed(() => {
+  const coefSL = parseFloat(settings.value.coefSL) || 0;
+  const feeSell = parseFloat(settings.value.feeSell) || 0;
+
+  const result = (coefSL + feeSell) / 100;
+  return Number(result.toFixed(5)); // Ensures the output is a number
+});
 const digits = computed(() => calculateDigits(buyPrice.value || 0));
 const digitsLote = computed(() => calculateDigitsLote(digits.value));
 
@@ -111,11 +122,37 @@ const t_TpIndex = computed(() => {
 });
 
 const t_SlPrice = computed(() => {
-  if (!t_SlVolume.value || !buyPrice.value || !t_Amount.value) return null;
-  return +(
-    ((t_SlVolume.value - buyPrice.value * t_Amount.value) * -1) /
-    t_Amount.value
-  ).toFixed(digits.value);
+  try {
+    // Validate required dependencies
+    if (!t_SlVolume.value || !buyPrice.value || !t_Amount.value) {
+      return null;
+    }
+
+    // Destructure for clarity
+    const stopLossVolume = parseFloat(t_SlVolume.value);
+    const entryPrice = parseFloat(buyPrice.value);
+    const positionSize = parseFloat(t_Amount.value);
+
+    // Calculate components
+    const positionValue = entryPrice * positionSize;
+    const stopLossDifference = positionValue - stopLossVolume;
+
+    // Avoid division by zero
+    if (positionSize === 0) {
+      console.error('Invalid position size (zero)');
+      return null;
+    }
+
+    // Calculate raw price
+    const rawPrice = stopLossDifference / positionSize;
+
+    // Format to required precision
+    return Number(rawPrice.toFixed(digits.value));
+
+  } catch (error) {
+    console.error('Error calculating stop loss price:', error);
+    return null;
+  }
 });
 
 const t_ZeroPrice = computed(() => {
@@ -155,11 +192,14 @@ watch([t_Amount, t_SlPrice, t_TpPrice], ([newAmount, newStopLoss, newTakeProfit]
       <div class="grid grid-cols-2 gap-2">
         <div>
           <label for="integeronly" class="block">Price</label>
-          <InputNumber v-model.number="order.buyPrice" inputId="integeronly" fluid size="small" />
+          <InputNumber v-model.number="order.buyPrice" inputId="integeronly" size="small"
+            :step="Number(selectedSymbol?.priceFilter.tickSize)" showButtons fluid />
         </div>
         <div>
-          <label for="integeronly" class="block">Amount</label>
-          <InputNumber v-model.number="order.amount" inputId="integeronly" fluid size="small" />
+          <label for="integeronly" class="block">Budget</label>
+          <InputNumber v-model.number="order.budget" inputId="integeronly" size="small"
+            :min="Number(selectedSymbol?.lotSizeFilter.minOrderAmt)"
+            :max="Number(selectedSymbol?.lotSizeFilter.maxOrderAmt)" showButtons fluid />
         </div>
         <div>
           <label for="integeronly" class="block">Stop Loss</label>

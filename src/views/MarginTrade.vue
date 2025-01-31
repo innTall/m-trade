@@ -3,7 +3,6 @@ import MarginOptions from '@/components/MarginOptions.vue';
 import KlinesChart from '@/components/KlinesChart.vue';
 import MarginSettings from '@/components/MarginSettings.vue';
 import OrderList from '@/components/OrderList.vue';
-import PlaceOrder from '@/components/PlaceOrder.vue';
 import OrderPlacement from '@/components/OrderPlacement.vue';
 </script>
 
@@ -18,7 +17,6 @@ import OrderPlacement from '@/components/OrderPlacement.vue';
       </div>
     </div>
     <KlinesChart />
-    <PlaceOrder />
     <OrderList />
     <OrderPlacement />
   </div>

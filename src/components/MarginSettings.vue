@@ -36,7 +36,7 @@ const submit = () => {
       icon="pi pi-cog"
       aria-label="Cog"
       variant="text"
-      severity="secondary"
+      severity="contrast"
     />
     <Dialog
       v-model:visible="isOpen"

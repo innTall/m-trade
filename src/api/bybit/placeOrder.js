@@ -3,7 +3,7 @@ import fetchWrapper from './fetchWrapper';
 export default async function placeOrder({
   symbol,
   side,
-  amount,
+  qty,
   price,
   takeProfit,
   stopLoss,
@@ -19,7 +19,7 @@ export default async function placeOrder({
       side,
       isLeverage: 1,
       orderType: 'Limit',
-      qty: amount,
+      qty,
       price,
       takeProfit,
       stopLoss,

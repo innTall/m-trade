@@ -5,57 +5,38 @@ import {
   formatToPrecision,
 } from '../helpers';
 
-export default function useOrderCalculations(selectedSymbol) {
-  const DEFAULT_SETTINGS = {
-    deposit: 100,
-    leverage: 10,
-    riskFactor: 2,
-    tpFactor: 3,
-    slFactor: 1,
-    buyFee: 0.02,
-    sellFee: 0.055,
-  };
-
-  const settings = ref({ ...DEFAULT_SETTINGS });
+export default function useOrderCalculations({ symbol, settings }) {
   const price = ref(null);
   const positionSide = ref(null);
 
-  const symbol = computed(() => selectedSymbol.value);
-
   const zeroPrice = computed(() => {
-    const totalFactors = calculateTotalFactor([
-      settings.value.buyFee,
-      settings.value.sellFee,
-    ]);
+    const totalFactors = calculateTotalFactor([settings.coefExtra.value]);
     return price.value * totalFactors;
   });
-
   const margin = computed(() => {
-    if (!settings.value.deposit || !settings.value.riskFactor) return null;
-    return ((settings.value.deposit * settings.value.riskFactor) / 100).toFixed(
+    if (!settings.deposit.value || !settings.coefRisk.value) return null;
+    return ((settings.deposit.value * settings.coefRisk.value) / 100).toFixed(
       2
     );
   });
 
   const orderSize = computed(() => {
-    if (!margin.value || !settings.value.leverage) return null;
-    return (parseFloat(margin.value) * settings.value.leverage).toFixed(2);
+    if (!margin.value || !settings.leverage.value) return null;
+    return (parseFloat(margin.value) * settings.leverage.value).toFixed(2);
   });
 
   // Computed values
   const totalFactorForSL = computed(() => {
     return calculateTotalFactor([
-      settings.value.slFactor,
-      settings.value.buyFee,
-      settings.value.sellFee,
+      settings.slFactor.value,
+      settings.coefExtra.value,
     ]);
   });
 
   const totalFactorForTP = computed(() => {
     return calculateTotalFactor([
-      settings.value.tpFactor,
-      settings.value.buyFee,
-      settings.value.sellFee,
+      settings.tpFactor.value,
+      settings.coefExtra.value,
     ]);
   });
 

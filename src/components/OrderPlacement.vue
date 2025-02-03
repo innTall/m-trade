@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia';
 import { Button, InputNumber, SelectButton } from 'primevue';
 import MarginSettings from './MarginSettings.vue';
 import { useSymbolStore } from '@/stores/symbolStore';
+import { useMarginSettingsStore } from '../stores/marginSettings';
 import { useOrderCalculations } from '@/composables';
 import { calculateOrderQty, formatToPrecision } from '../helpers';
 import ByBit from '@/api/bybit';
@@ -18,6 +19,7 @@ const ORDER_SIDE_OPTIONS = ['Buy', 'Sell'];
 // ----------------------------
 const symbolStore = useSymbolStore();
 const { selectedSymbol, loading } = storeToRefs(symbolStore);
+const settings = storeToRefs(useMarginSettingsStore());
 
 // ----------------------------
 // Reactive State
@@ -37,7 +39,7 @@ const {
   takeProfit: calculatedTakeProfit,
   updatePrice,
   updatePositionSide,
-} = useOrderCalculations(selectedSymbol);
+} = useOrderCalculations({ symbol: selectedSymbol, settings });
 
 // ----------------------------
 // Computed
@@ -178,18 +180,18 @@ watch(orderSide, newValue => {
     </div>
 
     <!-- Results Display -->
-    <div class="bg-surface-700 p-4 rounded-lg shadow">
+    <!-- <div class="bg-surface-700 p-4 rounded-lg shadow">
       <h2 class="text-xl font-bold mb-4">Calculations</h2>
-      <div class="grid grid-cols-1 divide-y">
-        <!-- Header -->
-        <!-- <div class="grid grid-cols-3 py-2 font-medium">
+      <div class="grid grid-cols-1 divide-y"> -->
+    <!-- Header -->
+    <!-- <div class="grid grid-cols-3 py-2 font-medium">
           <div>Parameter</div>
           <div>Actual</div>
           <div>Theoretical</div>
         </div> -->
 
-        <!-- Rows -->
-        <!-- <div class="grid grid-cols-3 py-2">
+    <!-- Rows -->
+    <!-- <div class="grid grid-cols-3 py-2">
           <div>Buy Order</div>
           <div>{{ buyOrder || 'N/A' }}</div>
           <div>{{ t_BuyOrder || 'N/A' }}</div>
@@ -219,7 +221,7 @@ watch(orderSide, newValue => {
           <div>-</div>
           <div>{{ t_SlVolumeSum || 'N/A' }}</div>
         </div> -->
-      </div>
-    </div>
+    <!-- </div>
+    </div> -->
   </div>
 </template>

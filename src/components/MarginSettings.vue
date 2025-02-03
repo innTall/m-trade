@@ -4,7 +4,7 @@ import { Button, Dialog, Divider, InputNumber } from 'primevue';
 import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
-const { deposit, leverage, coefRisk, coefTP, coefSL, coefExtra } = storeToRefs(
+const { leverage, coefRisk, coefTP, coefSL, coefExtra } = storeToRefs(
   useMarginSettingsStore()
 );
 
@@ -39,17 +39,6 @@ const submit = () => {
     >
       <div class="space-y-4">
         <div class="space-y-3">
-          <div class="flex items-center justify-between gap-4">
-            <label for="depo">Deposit</label>
-            <InputNumber
-              id="depo"
-              v-model="deposit"
-              mode="currency"
-              currency="USD"
-              class="text-right"
-              size="small"
-            />
-          </div>
           <div class="flex items-center justify-between gap-4">
             <label for="lev">Leverage</label>
             <InputNumber

@@ -4,6 +4,7 @@ import getAccountInfo from './getAccountInfo';
 import placeOrder from './placeOrder';
 import cancelOrder from './cancelOrder';
 import getOrderHistory from './getOrderHistory';
+import getSpotMarginState from './getSpotMarginState';
 
 const ByBit = {
   getKlines,
@@ -12,6 +13,7 @@ const ByBit = {
   placeOrder,
   cancelOrder,
   getOrderHistory,
+  getSpotMarginState,
 };
 
 export default ByBit;

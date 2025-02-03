@@ -2,15 +2,18 @@
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
+import { useAccountStore } from '@/stores/accountStore';
 
-const { deposit, leverage, coefRisk, coefTP, coefSL } = storeToRefs(
+const { leverage, coefRisk, coefTP, coefSL } = storeToRefs(
   useMarginSettingsStore()
 );
 
+const account = storeToRefs(useAccountStore());
+
 // Computed properties for calculations
 const margin = computed(() => {
-  if (!deposit.value || !coefRisk.value) return '0.00';
-  return +((deposit.value * coefRisk.value) / 100).toFixed(2);
+  if (!account.balance.value || !coefRisk.value) return '0.00';
+  return +((account.balance.value * coefRisk.value) / 100).toFixed(2);
 });
 
 const tpCost = computed(() => {

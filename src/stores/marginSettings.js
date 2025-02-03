@@ -4,7 +4,6 @@ import { ref } from 'vue';
 export const useMarginSettingsStore = defineStore(
   'marginSettings',
   () => {
-    const deposit = ref(100);
     const leverage = ref(10);
     const coefRisk = ref(2);
     const coefTP = ref(3);
@@ -12,7 +11,6 @@ export const useMarginSettingsStore = defineStore(
     const coefExtra = ref(0.1); // Little extra on top like cherry on cake. To cover fees.
 
     return {
-      deposit,
       leverage,
       coefRisk,
       coefTP,

@@ -24,7 +24,7 @@ export default async function fetchWrapper({
           (await prepareAuthHeaders({
             apiKey,
             secretKey,
-            query: query || body,
+            query: query || body || '',
           }))),
         ...(method === 'POST' && {
           'Content-Type': 'application/json',

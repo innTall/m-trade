@@ -5,7 +5,7 @@ import {
   formatToPrecision,
 } from '../helpers';
 
-export default function useOrderCalculations({ symbol, settings }) {
+export default function useOrderCalculations({ symbol, settings, account }) {
   const price = ref(null);
   const positionSide = ref(null);
 
@@ -14,10 +14,8 @@ export default function useOrderCalculations({ symbol, settings }) {
     return price.value * totalFactors;
   });
   const margin = computed(() => {
-    if (!settings.deposit.value || !settings.coefRisk.value) return null;
-    return ((settings.deposit.value * settings.coefRisk.value) / 100).toFixed(
-      2
-    );
+    if (!account.balance.value || !settings.coefRisk.value) return null;
+    return ((account.balance.value * settings.coefRisk.value) / 100).toFixed(2);
   });
 
   const orderSize = computed(() => {
@@ -28,14 +26,14 @@ export default function useOrderCalculations({ symbol, settings }) {
   // Computed values
   const totalFactorForSL = computed(() => {
     return calculateTotalFactor([
-      settings.slFactor.value,
+      settings.coefSL.value,
       settings.coefExtra.value,
     ]);
   });
 
   const totalFactorForTP = computed(() => {
     return calculateTotalFactor([
-      settings.tpFactor.value,
+      settings.coefTP.value,
       settings.coefExtra.value,
     ]);
   });

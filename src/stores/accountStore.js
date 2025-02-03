@@ -27,19 +27,17 @@ export const useAccountStore = defineStore('accountStore', () => {
     }
   };
 
-  const usdtBalance = computed(() => {
-    if (account.value) {
-      return (
-        account.value[0].coin.find(({ coin }) => coin === 'USDT')
-          .walletBalance || '0'
-      );
-    }
-    return '0';
+  const balance = computed(() => {
+    if (!account.value) return '0';
+    const balance =
+      account.value[0].coin.find(({ coin }) => coin === 'USDT').walletBalance ||
+      '0';
+    return parseInt(balance).toString();
   });
 
   return {
     account,
-    usdtBalance,
+    balance,
     fetchAccount,
   };
 });

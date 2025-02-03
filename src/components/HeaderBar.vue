@@ -4,7 +4,7 @@ import SelectQuoteAsset from './SelectQuoteAsset.vue';
 import { useAccountStore } from '../stores/accountStore';
 
 const accountStore = useAccountStore();
-const { usdtBalance } = storeToRefs(accountStore);
+const { balance } = storeToRefs(accountStore);
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const { usdtBalance } = storeToRefs(accountStore);
       <img src="/pwa-64x64.png" alt="Logo" width="32" />
     </div> -->
     <div>
-      Balance: <span class="font-bold">${{ usdtBalance }}</span>
+      Balance: <span class="font-bold">${{ balance }}</span>
     </div>
     <div>Market: <SelectQuoteAsset /></div>
   </div>

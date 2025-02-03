@@ -93,7 +93,7 @@ const submit = () => {
             />
           </div>
           <div class="flex items-center justify-between gap-4">
-            <label for="cord">Margin</label>
+            <label for="cord">Extra</label>
             <InputNumber
               id="cord"
               v-model="coefExtra"

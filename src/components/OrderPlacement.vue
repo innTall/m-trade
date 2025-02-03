@@ -4,9 +4,10 @@ import { storeToRefs } from 'pinia';
 import { Button, InputNumber, SelectButton } from 'primevue';
 import MarginSettings from './MarginSettings.vue';
 import { useSymbolStore } from '@/stores/symbolStore';
-import { useMarginSettingsStore } from '../stores/marginSettings';
+import { useMarginSettingsStore } from '@/stores/marginSettings';
+import { useAccountStore } from '@/stores/accountStore';
 import { useOrderCalculations } from '@/composables';
-import { calculateOrderQty, formatToPrecision } from '../helpers';
+import { calculateOrderQty, formatToPrecision } from '@/helpers';
 import ByBit from '@/api/bybit';
 
 // ----------------------------
@@ -20,6 +21,7 @@ const ORDER_SIDE_OPTIONS = ['Buy', 'Sell'];
 const symbolStore = useSymbolStore();
 const { selectedSymbol, loading } = storeToRefs(symbolStore);
 const settings = storeToRefs(useMarginSettingsStore());
+const account = storeToRefs(useAccountStore());
 
 // ----------------------------
 // Reactive State
@@ -39,7 +41,7 @@ const {
   takeProfit: calculatedTakeProfit,
   updatePrice,
   updatePositionSide,
-} = useOrderCalculations({ symbol: selectedSymbol, settings });
+} = useOrderCalculations({ symbol: selectedSymbol, settings, account });
 
 // ----------------------------
 // Computed

@@ -26,12 +26,6 @@ const slCost = computed(() => {
 
 <template>
   <div class="flex flex-row items-center justify-between">
-    <!-- Deposit -->
-    <div>
-      <div class="text-sm">Deposite</div>
-      <div class="text-sm font-bold text-center">{{ deposit }}$</div>
-    </div>
-
     <!-- Leverage -->
     <div>
       <div class="text-sm">Leverage</div>

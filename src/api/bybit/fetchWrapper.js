@@ -1,10 +1,10 @@
-import ByBitConfig from './config';
+import APP_CONFIG from '@/config';
 import { prepareAuthHeaders } from './utils';
-// this should be userCOnfig
+
 const isTest = true;
 // this should be from some secure storage
-const apiKey = 'yrQkjPjnK6C3GmesKu';
-const secretKey = 'RYFN0RV43vWf7Y2TjCbrJRJLygNQEePgWd0W';
+const apiKey = APP_CONFIG.exchange.bybit.apiKey;
+const secretKey = APP_CONFIG.exchange.bybit.secretKeyKey;
 
 export default async function fetchWrapper({
   path,
@@ -14,7 +14,7 @@ export default async function fetchWrapper({
   isPrivate = false,
 }) {
   const queryString = query ? `?${query}` : '';
-  const url = `${ByBitConfig.getURL(isTest)}${path}${queryString}`;
+  const url = `${APP_CONFIG.exchange.bybit.getURL(isTest)}${path}${queryString}`;
 
   try {
     const response = await fetch(url, {

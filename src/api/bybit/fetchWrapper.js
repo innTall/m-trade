@@ -4,7 +4,7 @@ import { prepareAuthHeaders } from './utils';
 const isTest = true;
 // this should be from some secure storage
 const apiKey = APP_CONFIG.exchange.bybit.apiKey;
-const secretKey = APP_CONFIG.exchange.bybit.secretKeyKey;
+const secretKey = APP_CONFIG.exchange.bybit.secretKey;
 
 export default async function fetchWrapper({
   path,

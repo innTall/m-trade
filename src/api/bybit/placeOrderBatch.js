@@ -1,13 +1,14 @@
 import fetchWrapper from './fetchWrapper';
 // https://bybit-exchange.github.io/docs/v5/order/create-order
-export default async function placeOrder(order) {
-  const path = '/order/create';
+export default async function placeOrder(orders) {
+  const path = '/order/create-batch';
   const data = await fetchWrapper({
     path,
     isPrivate: true,
     method: 'POST',
-    body: JSON.stringify(order),
+    body: JSON.stringify(orders),
   });
+
   if (
     data?.result &&
     Array.isArray(data.result.list) &&

@@ -124,19 +124,16 @@ onMounted(async () => {
 });
 
 // Watchers for symbol and interval changes
-watch(
-  [selectedSymbol, selectedInterval],
-  async ([newSymbol, newInterval], [oldSymbol, oldInterval]) => {
-    console.log(
-      `Symbol or interval changed: ${newSymbol.symbol}, ${newInterval}`
-    );
-    await getChartData({
-      symbol: newSymbol.symbol || 'BTCUSDT',
-      interval: newInterval,
-      chart: candlestickSeries,
-    });
-  }
-);
+watch([selectedSymbol, selectedInterval], async ([newSymbol, newInterval]) => {
+  console.log(
+    `Symbol or interval changed: ${newSymbol.symbol}, ${newInterval}`
+  );
+  await getChartData({
+    symbol: newSymbol.symbol || 'BTCUSDT',
+    interval: newInterval,
+    chart: candlestickSeries,
+  });
+});
 
 onBeforeUnmount(() => {
   if (ws) {

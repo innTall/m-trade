@@ -1,25 +1,30 @@
 <script setup>
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, watch, computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
-import { Button, InputNumber, SelectButton } from 'primevue';
+import {
+  Button,
+  InputNumber,
+  ToggleButton,
+  FloatLabel,
+  Message,
+} from 'primevue';
 import MarginSettings from './MarginSettings.vue';
 import { useSymbolStore } from '@/stores/symbolStore';
 import { useMarginSettingsStore } from '@/stores/marginSettings';
 import { useAccountStore } from '@/stores/accountStore';
-import { useOrderCalculations } from '@/composables';
-import { calculateOrderQty, formatToPrecision } from '@/helpers';
-import ByBit from '@/api/bybit';
-
-// ----------------------------
-// Constants
-// ----------------------------
-const ORDER_SIDE_OPTIONS = ['Buy', 'Sell'];
+import {
+  calculateTotalFactor,
+  calculatePriceLevel,
+  calculateOrderQty,
+  formatToPrecision,
+} from '../helpers';
+// import ByBit from '@/api/bybit';
 
 // ----------------------------
 // Store Setup
 // ----------------------------
 const symbolStore = useSymbolStore();
-const { selectedSymbol, loading } = storeToRefs(symbolStore);
+const { selectedSymbol } = storeToRefs(symbolStore);
 const settings = storeToRefs(useMarginSettingsStore());
 const account = storeToRefs(useAccountStore());
 
@@ -27,46 +32,129 @@ const account = storeToRefs(useAccountStore());
 // Reactive State
 // ----------------------------
 const price = ref(null);
-const orderSide = ref('Buy');
 const orderSize = ref(null);
-const takeProfit = ref(null);
 const stopLoss = ref(null);
+const isLong = ref(true);
 
-// ----------------------------
-// Composables
-// ----------------------------
-const {
-  orderSize: calculatedOrderSize,
-  stopLoss: calculatedStopLoss,
-  takeProfit: calculatedTakeProfit,
-  updatePrice,
-  updatePositionSide,
-} = useOrderCalculations({ symbol: selectedSymbol, settings, account });
+const zeroPrice = computed(() => {
+  const totalFactors = calculateTotalFactor([settings.coefExtra.value]);
+  if (!price.value) return null;
+  const calculatedPrice = price.value * totalFactors;
+  const precision = selectedSymbol.value.priceFilter.tickSize;
+  return formatToPrecision(calculatedPrice, precision);
+});
 
-// ----------------------------
-// Computed
-// ----------------------------
+const margin = computed(() => {
+  if (!account.balance.value || !settings.coefRisk.value) return null;
+  return ((account.balance.value * settings.coefRisk.value) / 100).toFixed(2);
+});
+
+const calculatedOrderSize = computed(() => {
+  if (!margin.value || !settings.leverage.value) return null;
+  return (parseFloat(margin.value) * settings.leverage.value).toFixed(2);
+});
+
 const quantity = computed(() => {
   if (!price.value || !selectedSymbol.value) return null;
   const lotSizeFilter = selectedSymbol.value.lotSizeFilter;
   const precision = lotSizeFilter.basePrecision;
   const qty = calculateOrderQty({
-    amount: orderSize.value,
+    amount: orderSize.value / settings.gridSize.value,
     price: price.value,
     lotSizeFilter,
   });
   return formatToPrecision(qty, precision);
 });
 
+// Computed values
+const totalFactorForSL = computed(() => {
+  return calculateTotalFactor([
+    settings.coefSL.value,
+    settings.coefExtra.value,
+  ]);
+});
+
+const calculatedStopLoss = computed(() => {
+  if (!price.value || !selectedSymbol.value) return null;
+  const isTakeProfit = false;
+  const precision = selectedSymbol.value.priceFilter.tickSize;
+  const priceLevel = calculatePriceLevel(
+    price.value,
+    totalFactorForSL.value,
+    isLong.value,
+    isTakeProfit
+  );
+  return formatToPrecision(priceLevel, precision);
+});
+
+const takeProfitGrid = computed(() => {
+  const maxGridSize = 10; // Maximum allowed orders
+
+  // Validate stepPercent (must be between 1 and 100)
+  if (
+    typeof settings.gridStep.value !== 'number' ||
+    settings.gridStep.value < 1 ||
+    settings.gridStep.value > 100
+  ) {
+    throw new Error('stepPercent must be a number between 1 and 100.');
+  }
+
+  // Validate orders (must be between 1 and maxOrders)
+  if (
+    typeof settings.gridSize.value !== 'number' ||
+    settings.gridSize.value < 1 ||
+    settings.gridSize.value > maxGridSize
+  ) {
+    throw new Error(`orders must be a number between 1 and ${maxGridSize}.`);
+  }
+
+  // Generate percentage grid
+  return Array.from({ length: settings.gridSize.value }, (_, i) =>
+    parseFloat((settings.gridStep.value * (i + 1)).toFixed(0))
+  );
+});
+
+const calculateTakeProfitPrice = takeProfitFactor => {
+  if (!price.value || !selectedSymbol.value) return null;
+  const isTakeProfit = true;
+  const precision = selectedSymbol.value.priceFilter.tickSize;
+  const priceLevel = calculatePriceLevel(
+    price.value,
+    calculateTotalFactor([takeProfitFactor, settings.coefExtra.value]),
+    isLong.value,
+    isTakeProfit
+  );
+  return formatToPrecision(priceLevel, precision);
+};
+
+const ordersBatch = computed(() => {
+  try {
+    return takeProfitGrid.value.map(takeProfitFactor => {
+      return {
+        symbol: selectedSymbol.value.symbol,
+        side: isLong.value ? 'Buy' : 'Sell',
+        qty: quantity.value.toString(),
+        price: price.value.toString(),
+        takeProfit: calculateTakeProfitPrice(takeProfitFactor),
+        stopLoss: stopLoss.value.toString(),
+        category: 'spot',
+        isLeverage: 1,
+        orderType: 'Limit',
+        tpslMode: 'Full',
+      };
+    });
+  } catch (e) {
+    console.error('Error while composing orders batch', e);
+    return null;
+  }
+});
+
 const sendOrder = async () => {
-  console.log({
-    symbol: selectedSymbol.value.symbol,
-    side: orderSide.value,
-    qty: quantity.value.toString(),
-    price: price.value.toString(),
-    takeProfit: takeProfit.value.toString(),
-    stopLoss: stopLoss.value.toString(),
-  });
+  if (!ordersBatch.value) {
+    console.log('There is no orders to place');
+    return;
+  }
+  console.log(ordersBatch.value);
   // await ByBit.placeOrder({
   //   symbol: selectedSymbol.value.symbol,
   //   side: orderSide.value,
@@ -80,32 +168,36 @@ const sendOrder = async () => {
 // Reset manual input to calculated values(strategy)
 const resetOrder = () => {
   orderSize.value = calculatedOrderSize.value;
-  takeProfit.value = calculatedTakeProfit.value;
   stopLoss.value = calculatedStopLoss.value;
 };
 
 onMounted(() => {
-  // Add default position
-  updatePositionSide(orderSide.value);
+  orderSize.value = calculatedOrderSize.value;
 });
 
-watch(price, newPrice => {
-  updatePrice(newPrice);
-  takeProfit.value = calculatedTakeProfit.value;
+watch(calculatedOrderSize, newValue => {
+  if (newValue === null) return;
+  orderSize.value = calculatedOrderSize.value;
+});
+
+watch(price, () => {
   stopLoss.value = calculatedStopLoss.value;
-});
-
-watch(orderSide, newValue => {
-  updatePositionSide(newValue);
 });
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto p-2 space-y-2">
+  <div class="max-w-4xl mx-auto p-1 space-y-2">
     <!-- Order Inputs -->
-    <div class="p-2 rounded-lg">
+    <div class="p-1 rounded-lg">
       <div class="flex flex-row items-center justify-between">
-        <div>Order Parameters</div>
+        <div>
+          <ToggleButton
+            v-model="isBuying"
+            onLabel="Long"
+            offLabel="Short"
+            class="w-20"
+          />
+        </div>
         <div class="flex">
           <Button
             @click="resetOrder"
@@ -118,112 +210,66 @@ watch(orderSide, newValue => {
           <MarginSettings />
         </div>
       </div>
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-2 gap-x-2 gap-y-4 pt-4">
         <div>
-          <label for="integeronly" class="block">Price</label>
-          <InputNumber
-            v-model.number="price"
-            inputId="integeronly"
-            size="small"
-            :step="Number(selectedSymbol?.priceFilter.tickSize)"
-            showButtons
-            fluid
-          />
+          <FloatLabel variant="on">
+            <InputNumber
+              v-model.number="orderSize"
+              :defaultValue="calculatedOrderSize"
+              inputId="positionSize"
+              size="small"
+              :min="Number(selectedSymbol?.lotSizeFilter.minOrderAmt)"
+              :max="Number(selectedSymbol?.lotSizeFilter.maxOrderAmt)"
+              showButtons
+              fluid
+            />
+            <label for="positionSize">Position Size</label>
+          </FloatLabel>
+          <Message size="small" severity="secondary" variant="simple">
+            Default: {{ calculatedOrderSize }}
+          </Message>
         </div>
         <div>
-          <label for="integeronly" class="block">Position Size</label>
-          <InputNumber
-            v-model.number="orderSize"
-            :defaultValue="calculatedOrderSize"
-            inputId="integeronly"
-            size="small"
-            :min="Number(selectedSymbol?.lotSizeFilter.minOrderAmt)"
-            :max="Number(selectedSymbol?.lotSizeFilter.maxOrderAmt)"
-            showButtons
-            fluid
-          />
+          <FloatLabel variant="on">
+            <InputNumber
+              v-model.number="price"
+              inputId="price"
+              size="small"
+              :step="Number(selectedSymbol?.priceFilter.tickSize)"
+              showButtons
+              fluid
+            />
+            <label for="price">Price</label>
+          </FloatLabel>
+          <Message size="small" severity="secondary" variant="simple">
+            Zero: {{ zeroPrice }}
+          </Message>
         </div>
         <div>
-          <label for="integeronly" class="block">Stop Loss</label>
-          <InputNumber
-            v-model="stopLoss"
-            :defaultValue="calculatedStopLoss"
-            inputId="integeronly"
-            size="small"
-            showButtons
-            fluid
-          />
+          <FloatLabel variant="on">
+            <InputNumber
+              v-model="stopLoss"
+              :defaultValue="calculatedStopLoss"
+              inputId="stopLoss"
+              size="small"
+              showButtons
+              fluid
+            />
+            <label for="stopLoss">Stop Loss</label>
+          </FloatLabel>
+          <Message size="small" severity="secondary" variant="simple">
+            Default: {{ calculatedStopLoss }}
+          </Message>
         </div>
         <div>
-          <label for="integeronly" class="block">Take Profit</label>
-          <InputNumber
-            v-model.number="takeProfit"
-            :defaultValue="calculatedTakeProfit"
-            inputId="integeronly"
+          <Button
+            @click="sendOrder"
+            label="Place Order"
+            class="w-full"
             size="small"
-            showButtons
-            fluid
           />
         </div>
-      </div>
-      <div class="flex flex-row justify-between py-2 gap-4">
-        <SelectButton
-          v-model="orderSide"
-          :options="ORDER_SIDE_OPTIONS"
-          size="small"
-        />
-        <Button
-          @click="sendOrder"
-          label="Place Order"
-          class="w-full"
-          size="small"
-        />
       </div>
     </div>
-
-    <!-- Results Display -->
-    <!-- <div class="bg-surface-700 p-4 rounded-lg shadow">
-      <h2 class="text-xl font-bold mb-4">Calculations</h2>
-      <div class="grid grid-cols-1 divide-y"> -->
-    <!-- Header -->
-    <!-- <div class="grid grid-cols-3 py-2 font-medium">
-          <div>Parameter</div>
-          <div>Actual</div>
-          <div>Theoretical</div>
-        </div> -->
-
-    <!-- Rows -->
-    <!-- <div class="grid grid-cols-3 py-2">
-          <div>Buy Order</div>
-          <div>{{ buyOrder || 'N/A' }}</div>
-          <div>{{ t_BuyOrder || 'N/A' }}</div>
-        </div>
-        <div class="grid grid-cols-3 py-2">
-          <div>Amount</div>
-          <div>{{ amount || 'N/A' }}</div>
-          <div>{{ t_Amount || 'N/A' }}</div>
-        </div>
-        <div class="grid grid-cols-3 py-2">
-          <div>Stop Loss</div>
-          <div>{{ stopLoss || 'N/A' }}</div>
-          <div>{{ t_SlPrice || 'N/A' }}</div>
-        </div>
-        <div class="grid grid-cols-3 py-2">
-          <div>Take Profit</div>
-          <div>{{ takeProfit || 'N/A' }}</div>
-          <div>{{ t_TpPrice || 'N/A' }}</div>
-        </div>
-        <div class="grid grid-cols-3 py-2">
-          <div>Zero Price</div>
-          <div>-</div>
-          <div>{{ t_ZeroPrice || 'N/A' }}</div>
-        </div>
-        <div class="grid grid-cols-3 py-2">
-          <div>SL Volume</div>
-          <div>-</div>
-          <div>{{ t_SlVolumeSum || 'N/A' }}</div>
-        </div> -->
-    <!-- </div>
-    </div> -->
   </div>
 </template>

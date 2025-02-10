@@ -6,13 +6,13 @@ import ByBit from '@/api/bybit';
 
 const symbolStore = useSymbolStore();
 const { selectedSymbol } = storeToRefs(symbolStore);
-const orders = ref([])
+const orders = ref([]);
 
 // Watchers for symbol and interval changes
-watch(selectedSymbol, async (newSymbol, oldSymbol) => {
+watch(selectedSymbol, async newSymbol => {
   const result = await ByBit.getOrderHistory({ symbol: newSymbol.symbol });
   if (!result) return;
-  orders.value = result
+  orders.value = result;
 });
 </script>
 

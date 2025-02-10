@@ -4,9 +4,8 @@ import { Button, Dialog, Divider, InputNumber } from 'primevue';
 import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 
-const { leverage, coefRisk, coefTP, coefSL, coefExtra } = storeToRefs(
-  useMarginSettingsStore()
-);
+const { leverage, coefRisk, coefSL, coefExtra, gridSize, gridStep } =
+  storeToRefs(useMarginSettingsStore());
 
 const isOpen = ref(false);
 const open = () => {
@@ -49,26 +48,18 @@ const submit = () => {
               size="small"
             />
           </div>
-          <div class="flex justify-center text-sm">Coeficients</div>
-          <Divider />
+          <Divider>Coeficients</Divider>
           <div class="flex items-center justify-between gap-4">
             <label for="mar">Risk</label>
             <InputNumber
-              id="mar"
+              id="risk"
               v-model="coefRisk"
               suffix="%"
               class="text-right"
               size="small"
-            />
-          </div>
-          <div class="flex items-center justify-between gap-4">
-            <label for="tp">TP</label>
-            <InputNumber
-              id="tp"
-              v-model="coefTP"
-              suffix="%"
-              class="text-right"
-              size="small"
+              :min="1"
+              :max="100"
+              :step="1"
             />
           </div>
           <div class="flex items-center justify-between gap-4">
@@ -79,16 +70,48 @@ const submit = () => {
               suffix="%"
               class="text-right"
               size="small"
+              :min="1"
+              :max="100"
+              :step="1"
             />
           </div>
           <div class="flex items-center justify-between gap-4">
-            <label for="cord">Extra</label>
+            <label for="extra">Extra</label>
             <InputNumber
-              id="cord"
+              id="extra"
               v-model="coefExtra"
               suffix="%"
               class="text-right"
               size="small"
+              :min="0.01"
+              :max="1"
+              :step="0.01"
+            />
+          </div>
+          <Divider>Grid</Divider>
+          <div class="flex items-center justify-between gap-4">
+            <label for="size">Size</label>
+            <InputNumber
+              id="size"
+              v-model="gridSize"
+              class="text-right"
+              size="small"
+              :min="1"
+              :max="10"
+              :step="1"
+            />
+          </div>
+          <div class="flex items-center justify-between gap-4">
+            <label for="step">Step</label>
+            <InputNumber
+              id="step"
+              v-model="gridStep"
+              suffix="%"
+              class="text-right"
+              size="small"
+              :min="1"
+              :max="100"
+              :step="1"
             />
           </div>
         </div>

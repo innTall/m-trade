@@ -4,9 +4,7 @@ import { storeToRefs } from 'pinia';
 import { useMarginSettingsStore } from '@/stores/marginSettings.js';
 import { useAccountStore } from '@/stores/accountStore';
 
-const { leverage, coefRisk, coefTP, coefSL } = storeToRefs(
-  useMarginSettingsStore()
-);
+const { leverage, coefRisk, coefSL } = storeToRefs(useMarginSettingsStore());
 
 const account = storeToRefs(useAccountStore());
 
@@ -14,11 +12,6 @@ const account = storeToRefs(useAccountStore());
 const margin = computed(() => {
   if (!account.balance.value || !coefRisk.value) return '0.00';
   return +((account.balance.value * coefRisk.value) / 100).toFixed(2);
-});
-
-const tpCost = computed(() => {
-  if (!margin.value || !leverage.value || !coefTP.value) return '0.00';
-  return +((margin.value * leverage.value * coefTP.value) / 100).toFixed(2);
 });
 
 const slCost = computed(() => {
@@ -39,12 +32,6 @@ const slCost = computed(() => {
     <div>
       <div class="text-sm">M-{{ coefRisk }}%</div>
       <div class="text-sm font-bold text-center">{{ margin }}$</div>
-    </div>
-
-    <!-- Take Profit -->
-    <div>
-      <div class="text-sm">TP-{{ coefTP }}%</div>
-      <div class="text-sm font-bold text-center">{{ tpCost }}$</div>
     </div>
 
     <!-- Stop Loss -->

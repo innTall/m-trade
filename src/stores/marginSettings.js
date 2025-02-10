@@ -6,16 +6,18 @@ export const useMarginSettingsStore = defineStore(
   () => {
     const leverage = ref(10);
     const coefRisk = ref(2);
-    const coefTP = ref(3);
     const coefSL = ref(1);
     const coefExtra = ref(0.1); // Little extra on top like cherry on cake. To cover fees.
+    const gridSize = ref(1);
+    const gridStep = ref(1);
 
     return {
       leverage,
       coefRisk,
-      coefTP,
       coefSL,
       coefExtra,
+      gridSize,
+      gridStep,
     };
   },
   { persist: true }

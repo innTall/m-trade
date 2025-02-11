@@ -2,7 +2,7 @@ import fetchWrapper from './fetchWrapper.js';
 
 export default async function getSymbols() {
   const path = '/market/instruments-info';
-  const query = `category=spot`;
+  const query = `category=spot`; // change to linear
   const data = await fetchWrapper({
     path,
     query,

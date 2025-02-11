@@ -18,7 +18,7 @@ import {
   calculateOrderQty,
   formatToPrecision,
 } from '../helpers';
-// import ByBit from '@/api/bybit';
+import ByBit from '@/api/bybit';
 
 // ----------------------------
 // Store Setup
@@ -137,7 +137,7 @@ const ordersBatch = computed(() => {
         price: price.value.toString(),
         takeProfit: calculateTakeProfitPrice(takeProfitFactor),
         stopLoss: stopLoss.value.toString(),
-        category: 'spot',
+        category: 'linear',
         isLeverage: 1,
         orderType: 'Limit',
         tpslMode: 'Full',
@@ -154,15 +154,12 @@ const sendOrder = async () => {
     console.log('There is no orders to place');
     return;
   }
-  console.log(ordersBatch.value);
-  // await ByBit.placeOrder({
-  //   symbol: selectedSymbol.value.symbol,
-  //   side: orderSide.value,
-  //   qty: calculatedQuantity.value,
-  //   price: price.value.toString(),
-  //   takeProfit: takeProfit.value,
-  //   stopLoss: stopLoss.value,
-  // });
+
+  await Promise.all(
+    ordersBatch.value.map(order => {
+      ByBit.placeOrder(order);
+    })
+  );
 };
 
 // Reset manual input to calculated values(strategy)
@@ -192,7 +189,7 @@ watch(price, () => {
       <div class="flex flex-row items-center justify-between">
         <div>
           <ToggleButton
-            v-model="isBuying"
+            v-model="isLong"
             onLabel="Long"
             offLabel="Short"
             class="w-20"

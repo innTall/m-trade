@@ -77,7 +77,7 @@ const { selectedSymbol } = storeToRefs(symbolStore);
 
 const selectedInterval = ref('15');
 
-const wsUrl = 'wss://stream-testnet.bybit.com/v5/public/spot';
+const wsUrl = 'wss://stream-testnet.bybit.com/v5/public/linear';
 let ws;
 let chart;
 let candlestickSeries;

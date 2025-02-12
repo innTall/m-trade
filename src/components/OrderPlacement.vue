@@ -57,13 +57,17 @@ const calculatedOrderSize = computed(() => {
 const quantity = computed(() => {
   if (!price.value || !selectedSymbol.value) return null;
   const lotSizeFilter = selectedSymbol.value.lotSizeFilter;
-  const precision = lotSizeFilter.basePrecision;
-  const qty = calculateOrderQty({
-    amount: orderSize.value / settings.gridSize.value,
+  const precision = lotSizeFilter.qtyStep;
+  const { fullQty, gridQty } = calculateOrderQty({
+    amount: orderSize.value,
     price: price.value,
     lotSizeFilter,
+    gridSize: settings.gridSize.value,
   });
-  return formatToPrecision(qty, precision);
+  return {
+    fullQty: formatToPrecision(fullQty, precision),
+    gridQty: formatToPrecision(gridQty, precision),
+  };
 });
 
 // Computed values
@@ -87,79 +91,92 @@ const calculatedStopLoss = computed(() => {
   return formatToPrecision(priceLevel, precision);
 });
 
-const takeProfitGrid = computed(() => {
-  const maxGridSize = 10; // Maximum allowed orders
+// const takeProfitGrid = computed(() => {
+//   const maxGridSize = 10; // Maximum allowed orders
 
-  // Validate stepPercent (must be between 1 and 100)
-  if (
-    typeof settings.gridStep.value !== 'number' ||
-    settings.gridStep.value < 1 ||
-    settings.gridStep.value > 100
-  ) {
-    throw new Error('stepPercent must be a number between 1 and 100.');
-  }
+//   // Validate stepPercent (must be between 1 and 100)
+//   if (
+//     typeof settings.gridStep.value !== 'number' ||
+//     settings.gridStep.value < 1 ||
+//     settings.gridStep.value > 100
+//   ) {
+//     throw new Error('stepPercent must be a number between 1 and 100.');
+//   }
 
-  // Validate orders (must be between 1 and maxOrders)
-  if (
-    typeof settings.gridSize.value !== 'number' ||
-    settings.gridSize.value < 1 ||
-    settings.gridSize.value > maxGridSize
-  ) {
-    throw new Error(`orders must be a number between 1 and ${maxGridSize}.`);
-  }
+//   // Validate orders (must be between 1 and maxOrders)
+//   if (
+//     typeof settings.gridSize.value !== 'number' ||
+//     settings.gridSize.value < 1 ||
+//     settings.gridSize.value > maxGridSize
+//   ) {
+//     throw new Error(`orders must be a number between 1 and ${maxGridSize}.`);
+//   }
 
-  // Generate percentage grid
-  return Array.from({ length: settings.gridSize.value }, (_, i) =>
-    parseFloat((settings.gridStep.value * (i + 1)).toFixed(0))
-  );
+//   // Generate percentage grid
+//   return Array.from({ length: settings.gridSize.value }, (_, i) =>
+//     parseFloat((settings.gridStep.value * (i + 1)).toFixed(0))
+//   );
+// });
+
+// const calculateTakeProfitPrice = takeProfitFactor => {
+//   if (!price.value || !selectedSymbol.value) return null;
+//   const isTakeProfit = true;
+//   const precision = selectedSymbol.value.priceFilter.tickSize;
+//   const priceLevel = calculatePriceLevel(
+//     price.value,
+//     calculateTotalFactor([takeProfitFactor, settings.coefExtra.value]),
+//     isLong.value,
+//     isTakeProfit
+//   );
+//   return formatToPrecision(priceLevel, precision);
+// };
+
+const order = computed(() => {
+  return {
+    symbol: selectedSymbol.value.symbol,
+    side: isLong.value ? 'Buy' : 'Sell',
+    qty: quantity.value.fullQty,
+    price: price.value.toString(),
+    stopLoss: stopLoss.value.toString(),
+    category: 'linear',
+    orderType: 'Limit',
+    tpslMode: 'Full',
+  };
 });
 
-const calculateTakeProfitPrice = takeProfitFactor => {
-  if (!price.value || !selectedSymbol.value) return null;
-  const isTakeProfit = true;
-  const precision = selectedSymbol.value.priceFilter.tickSize;
-  const priceLevel = calculatePriceLevel(
-    price.value,
-    calculateTotalFactor([takeProfitFactor, settings.coefExtra.value]),
-    isLong.value,
-    isTakeProfit
-  );
-  return formatToPrecision(priceLevel, precision);
-};
-
-const ordersBatch = computed(() => {
-  try {
-    return takeProfitGrid.value.map(takeProfitFactor => {
-      return {
-        symbol: selectedSymbol.value.symbol,
-        side: isLong.value ? 'Buy' : 'Sell',
-        qty: quantity.value.toString(),
-        price: price.value.toString(),
-        takeProfit: calculateTakeProfitPrice(takeProfitFactor),
-        stopLoss: stopLoss.value.toString(),
-        category: 'linear',
-        isLeverage: 1,
-        orderType: 'Limit',
-        tpslMode: 'Full',
-      };
-    });
-  } catch (e) {
-    console.error('Error while composing orders batch', e);
-    return null;
-  }
-});
+// const takeProfit = computed(() => {
+//   try {
+//     return takeProfitGrid.value.map(takeProfitFactor => {
+//       return {
+//         symbol: selectedSymbol.value.symbol,
+//         side: isLong.value ? 'Buy' : 'Sell',
+//         qty: quantity.value.toString(),
+//         price: price.value.toString(),
+//         takeProfit: calculateTakeProfitPrice(takeProfitFactor),
+//         stopLoss: stopLoss.value.toString(),
+//         category: 'linear',
+//         orderType: 'Limit',
+//         tpslMode: 'Full',
+//       };
+//     });
+//   } catch (e) {
+//     console.error('Error while composing orders batch', e);
+//     return null;
+//   }
+// });
 
 const sendOrder = async () => {
-  if (!ordersBatch.value) {
-    console.log('There is no orders to place');
+  if (!order.value) {
+    console.log('There is no order to place');
     return;
   }
 
-  await Promise.all(
-    ordersBatch.value.map(order => {
-      ByBit.placeOrder(order);
-    })
-  );
+  await ByBit.setLeverage({
+    symbol: order.value.symbol,
+    leverage: settings.leverage.value.toString(),
+  });
+
+  await ByBit.placeOrder(order.value);
 };
 
 // Reset manual input to calculated values(strategy)

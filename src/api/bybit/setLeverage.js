@@ -1,7 +1,7 @@
 import fetchWrapper from './fetchWrapper';
 // https://bybit-exchange.github.io/docs/v5/position/leverage
 export default async function setLeverage({ symbol, leverage }) {
-  const path = '/position/leverage';
+  const path = '/position/set-leverage';
   const data = await fetchWrapper({
     path,
     isPrivate: true,

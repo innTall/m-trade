@@ -1,70 +1,104 @@
 /**
- * Calculates the order quantity based on the given amount, price, and lot size filter constraints.
- * Ensures the quantity adheres to min/max limits and base precision.
+ * Calculates the order quantity based on the given amount, price, lot size filter constraints,
+ * and gridSize (which divides the total order quantity into multiple parts).
+ * Ensures each part adheres to min/max limits and base precision.
  *
  * @param {Object} params - The input parameters.
  * @param {number} params.amount - The total amount to be used for the order.
  * @param {number} params.price - The price per unit of the asset.
  * @param {Object} params.lotSizeFilter - The constraints for order quantity.
- * @param {string} params.lotSizeFilter.basePrecision - The precision allowed for order quantity.
+ * @param {string} params.lotSizeFilter.qtyStep - The step size for quantity increments.
  * @param {string} params.lotSizeFilter.minOrderQty - The minimum allowed order quantity.
  * @param {string} params.lotSizeFilter.maxOrderQty - The maximum allowed order quantity.
  * @param {string} params.lotSizeFilter.minOrderAmt - The minimum order amount allowed.
  * @param {string} params.lotSizeFilter.maxOrderAmt - The maximum order amount allowed.
- * @returns {string} - The calculated and validated order quantity as a string.
+ * @param {number} params.gridSize - The number of divisions for the order quantity (1-10).
+ * @returns {Object} - An object containing fullQty and partialQtyList.
  * @throws {Error} - Throws an error if the amount or quantity is out of allowed bounds.
  *
  * Example:
- * calculateOrderQty({ amount: 100, price: 50, lotSizeFilter: { basePrecision: "0.01", minOrderQty: "0.1", maxOrderQty: "100", minOrderAmt: "10", maxOrderAmt: "5000" } })
- * -> "2.00"
+ * calculateOrderQty({
+ *   amount: 100,
+ *   price: 50,
+ *   lotSizeFilter: {
+ *     qtyStep: "0.01",
+ *     minOrderQty: "0.1",
+ *     maxOrderQty: "100",
+ *     minOrderAmt: "10",
+ *     maxOrderAmt: "5000"
+ *   },
+ *   gridSize: 2
+ * })
+ * -> { fullQty: "2.00", partialQtyList: ["1.00", "1.00"] }
  */
-export default function calculateOrderQty({ amount, price, lotSizeFilter }) {
-  // Destructure and convert lotSizeFilter values to numbers
-  const { basePrecision, minOrderQty, maxOrderQty, minOrderAmt, maxOrderAmt } =
-    lotSizeFilter;
+export default function calculateOrderQty({
+  amount,
+  price,
+  lotSizeFilter,
+  gridSize,
+}) {
+  // Validate gridSize
+  // Validate gridSize
+  if (!Number.isInteger(gridSize) || gridSize < 1 || gridSize > 10) {
+    throw new Error('gridSize must be an integer between 1 and 10.');
+  }
 
-  const parsedBasePrecision = parseFloat(basePrecision);
+  // Destructure and convert lotSizeFilter values to numbers
+  const { qtyStep, minOrderQty, maxOrderQty, minNotionalValue } = lotSizeFilter;
+
+  const parsedQtyStep = parseFloat(qtyStep);
   const parsedMinOrderQty = parseFloat(minOrderQty);
   const parsedMaxOrderQty = parseFloat(maxOrderQty);
-  const parsedMinOrderAmt = parseFloat(minOrderAmt);
-  const parsedMaxOrderAmt = parseFloat(maxOrderAmt);
+  const parsedMinNotionalValue = parseFloat(minNotionalValue);
 
-  // Ensure the amount is within the allowed min/max order amounts
-  if (amount < parsedMinOrderAmt) {
+  // Ensure the total amount is within the allowed min/max order amounts
+  if (amount < parsedMinNotionalValue) {
     throw new Error(
-      `Amount too small. Minimum order amount: ${parsedMinOrderAmt}`
-    );
-  }
-  if (amount > parsedMaxOrderAmt) {
-    throw new Error(
-      `Amount too large. Maximum order amount: ${parsedMaxOrderAmt}`
+      `Amount too small. Minimum order amount: ${parsedMinNotionalValue}`
     );
   }
 
-  // Calculate raw quantity from amount and price
-  const rawQty = amount / price;
+  // Calculate total quantity from amount and price
+  let fullQty = amount / price;
 
-  // Apply base precision by rounding down to the nearest allowed increment
-  const precisionMultiplier = 1 / parsedBasePrecision;
-  const preciseQty =
-    Math.floor(rawQty * precisionMultiplier) / precisionMultiplier;
-
-  // Ensure the quantity is within the allowed min/max order quantities
-  const clampedQty = Math.max(
-    parsedMinOrderQty,
-    Math.min(preciseQty, parsedMaxOrderQty)
-  );
-
-  if (clampedQty < parsedMinOrderQty) {
+  // Ensure the full quantity is within min/max limits
+  if (fullQty < parsedMinOrderQty) {
     throw new Error(
       `Quantity too small. Minimum order quantity: ${parsedMinOrderQty}`
     );
   }
-  if (clampedQty > parsedMaxOrderQty) {
+  if (fullQty > parsedMaxOrderQty) {
     throw new Error(
       `Quantity too large. Maximum order quantity: ${parsedMaxOrderQty}`
     );
   }
 
-  return clampedQty;
+  // Apply base precision by rounding down to the nearest allowed increment
+  const precisionMultiplier = 1 / parsedQtyStep;
+  fullQty = Math.floor(fullQty * precisionMultiplier) / precisionMultiplier;
+
+  // Calculate base order quantity per grid
+  let gridQty = fullQty / gridSize;
+  gridQty = Math.floor(gridQty * precisionMultiplier) / precisionMultiplier;
+
+  // Ensure each gridQty is within min/max constraints
+  if (gridQty < parsedMinOrderQty) {
+    throw new Error(
+      `Grid quantity too small. Each order must be at least ${parsedMinOrderQty}`
+    );
+  }
+  if (gridQty > parsedMaxOrderQty) {
+    throw new Error(
+      `Grid quantity too large. Each order must be at most ${parsedMaxOrderQty}`
+    );
+  }
+
+  // Adjust fullQty to ensure it is divisible by gridSize and matches the sum of gridQty
+  fullQty = gridQty * gridSize;
+
+  // Return full quantity and split order list
+  return {
+    fullQty,
+    gridQty,
+  };
 }

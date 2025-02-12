@@ -6,7 +6,6 @@ import Aura from '@primevue/themes/aura';
 
 import App from './App.vue';
 import router from './router/index.js';
-import { setupServiceWorker } from './registerServiceWorker.js';
 
 import 'primeicons/primeicons.css';
 import './style.css';
@@ -15,8 +14,6 @@ const app = createApp(App);
 const pinia = createPinia();
 
 pinia.use(piniaPluginPersistedstate);
-
-setupServiceWorker(); // Register the Service Worker
 
 app
   .use(PrimeVue, {

@@ -5,7 +5,7 @@ import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 
 const instrumentInfoStore = useInstrumentInfoStore();
 const { selectSymbol } = instrumentInfoStore;
-const { symbolsByQuote, loading, selectedSymbol } =
+const { baseAssets, loading, selectedSymbol } =
   storeToRefs(instrumentInfoStore);
 </script>
 
@@ -14,7 +14,7 @@ const { symbolsByQuote, loading, selectedSymbol } =
     :value="selectedSymbol"
     :defaultValue="selectedSymbol"
     @change="event => selectSymbol(event.value)"
-    :options="symbolsByQuote"
+    :options="baseAssets"
     optionLabel="baseCoin"
     size="small"
     placeholder="Base"

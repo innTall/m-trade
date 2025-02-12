@@ -43,7 +43,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   });
 
   // Computed Getters
-  const instrumentInfoByQuote = computed(() => {
+  const baseAssets = computed(() => {
     return instrumentInfo.value.filter(({ quoteCoin }) => {
       return quoteCoin === selectedQuote.value;
     });
@@ -65,7 +65,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   );
 
   watch(
-    () => instrumentInfoByQuote.value,
+    () => baseAssets.value,
     newValue => {
       selectedSymbol.value = newValue[0];
     }
@@ -75,7 +75,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     instrumentInfo,
     loading,
     error,
-    instrumentInfoByQuote,
+    baseAssets,
     selectedQuote,
     selectedSymbol,
     quoteAssets,

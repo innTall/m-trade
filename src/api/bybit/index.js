@@ -5,6 +5,7 @@ import placeOrder from './placeOrder';
 import cancelOrder from './cancelOrder';
 import getOrderHistory from './getOrderHistory';
 import setLeverage from './setLeverage';
+import cancelAllOrders from './cancelAllOrders';
 
 const ByBit = {
   getKlines,
@@ -14,6 +15,7 @@ const ByBit = {
   cancelOrder,
   getOrderHistory,
   setLeverage,
+  cancelAllOrders,
 };
 
 export default ByBit;

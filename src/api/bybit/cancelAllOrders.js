@@ -1,7 +1,7 @@
 import fetchWrapper from './fetchWrapper';
-// https://bybit-exchange.github.io/docs/v5/order/cancel
-export default async function cancelOrder({ symbol, orderId }) {
-  const path = '/order/cancel';
+// https://bybit-exchange.github.io/docs/v5/order/cancel-all
+export default async function cancelAllOrders({ symbol }) {
+  const path = '/order/cancel-all';
   const data = await fetchWrapper({
     path,
     isPrivate: true,
@@ -9,7 +9,6 @@ export default async function cancelOrder({ symbol, orderId }) {
     body: JSON.stringify({
       category: 'linear',
       symbol,
-      orderId,
     }),
   });
 

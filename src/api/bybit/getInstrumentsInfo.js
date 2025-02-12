@@ -1,8 +1,8 @@
 import fetchWrapper from './fetchWrapper.js';
 
-export default async function getSymbols() {
+export default async function getInstrumentsInfo() {
   const path = '/market/instruments-info';
-  const query = `category=spot`; // change to linear
+  const query = `category=linear&limit=1000`;
   const data = await fetchWrapper({
     path,
     query,

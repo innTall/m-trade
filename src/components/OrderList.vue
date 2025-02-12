@@ -1,11 +1,11 @@
 <script setup>
 import { ref, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useSymbolStore } from '@/stores/symbolStore';
+import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 import ByBit from '@/api/bybit';
 
-const symbolStore = useSymbolStore();
-const { selectedSymbol } = storeToRefs(symbolStore);
+const instrumentInfoStore = useInstrumentInfoStore();
+const { selectedSymbol } = storeToRefs(instrumentInfoStore);
 const orders = ref([]);
 
 // Watchers for symbol and interval changes

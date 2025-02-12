@@ -1,50 +1,50 @@
 import { ref, computed, watch } from 'vue';
 import { defineStore } from 'pinia';
-import ByBit from '@/api/bybit'; // Adjust the import path to your `getSymbols` function
+import ByBit from '@/api/bybit'; // Adjust the import path to your `getinstrumentInfo` function
 
-export const useSymbolStore = defineStore('symbolStore', () => {
+const filterInstrumentInfo = array => {
+  return array.filter(({ contractType, isPreListing }) => {
+    return contractType === 'LinearPerpetual' && !isPreListing;
+  });
+};
+
+export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   // State
-  const symbols = ref([]);
+  const instrumentInfo = ref([]);
   const loading = ref(false);
   const error = ref(null);
   const selectedQuote = ref(null);
   const selectedSymbol = ref(null);
 
   // Actions
-  const fetchSymbols = async () => {
+  const fetchInstrumentInfo = async () => {
     loading.value = true;
     error.value = null;
 
     try {
-      const result = await ByBit.getSymbols();
+      const result = await ByBit.getInstrumentsInfo();
       if (result) {
-        symbols.value = result;
+        instrumentInfo.value = filterInstrumentInfo(result);
       } else {
-        symbols.value = [];
-        error.value = 'No symbols found.';
+        instrumentInfo.value = [];
+        error.value = 'No instrumentInfo found.';
       }
     } catch (err) {
-      error.value = err.message || 'Failed to fetch symbols.';
+      error.value = err.message || 'Failed to fetch instrumentInfo.';
     } finally {
       loading.value = false;
     }
   };
 
-  const marginTradingSymbols = computed(() => {
-    return symbols.value.filter(
-      ({ marginTrading }) => marginTrading === 'utaOnly'
-    );
-  });
-
   const quoteAssets = computed(() => {
     return Array.from(
-      new Set(marginTradingSymbols.value.map(item => item.quoteCoin))
+      new Set(instrumentInfo.value.map(item => item.quoteCoin))
     );
   });
 
   // Computed Getters
-  const symbolsByQuote = computed(() => {
-    return marginTradingSymbols.value.filter(({ quoteCoin }) => {
+  const instrumentInfoByQuote = computed(() => {
+    return instrumentInfo.value.filter(({ quoteCoin }) => {
       return quoteCoin === selectedQuote.value;
     });
   });
@@ -65,21 +65,21 @@ export const useSymbolStore = defineStore('symbolStore', () => {
   );
 
   watch(
-    () => symbolsByQuote.value,
+    () => instrumentInfoByQuote.value,
     newValue => {
       selectedSymbol.value = newValue[0];
     }
   );
 
   return {
-    symbols,
+    instrumentInfo,
     loading,
     error,
-    symbolsByQuote,
+    instrumentInfoByQuote,
     selectedQuote,
     selectedSymbol,
     quoteAssets,
-    fetchSymbols,
+    fetchInstrumentInfo,
     selectQuote,
     selectSymbol,
   };

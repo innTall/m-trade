@@ -2,24 +2,24 @@
 import { onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import HeaderBar from './components/HeaderBar.vue';
-import { useSymbolStore } from './stores/symbolStore';
+import { useInstrumentInfoStore } from './stores/instrumentInfoStore';
 import { useAccountStore } from './stores/accountStore';
 import { useSpotMarginStore } from './stores/spotMarginStore';
 
 // Load initial data
-const symbolStore = useSymbolStore();
+const instrumentInfoStore = useInstrumentInfoStore();
 const accountStore = useAccountStore();
 const spotMarginStore = useSpotMarginStore();
-const { fetchSymbols } = symbolStore;
+const { fetchInstrumentInfo } = instrumentInfoStore;
 const { fetchAccount } = accountStore;
 const { fetchSpotMarginState } = spotMarginStore;
-const { symbols } = storeToRefs(symbolStore);
+const { instrumentInfo } = storeToRefs(instrumentInfoStore);
 const { account } = storeToRefs(accountStore);
 const { state } = storeToRefs(spotMarginStore);
 
 onMounted(async () => {
-  if (!symbols.length) {
-    await fetchSymbols();
+  if (!instrumentInfo.length) {
+    await fetchInstrumentInfo();
   }
 
   if (!account.length) {

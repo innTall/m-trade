@@ -1,4 +1,4 @@
-import getSymbols from './getSymbols';
+import getInstrumentsInfo from './getInstrumentsInfo';
 import getKlines from './getKlines';
 import getAccountInfo from './getAccountInfo';
 import placeOrder from './placeOrder';
@@ -8,7 +8,7 @@ import getSpotMarginState from './getSpotMarginState';
 
 const ByBit = {
   getKlines,
-  getSymbols,
+  getInstrumentsInfo,
   getAccountInfo,
   placeOrder,
   cancelOrder,

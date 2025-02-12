@@ -4,7 +4,7 @@ import vue from '@vitejs/plugin-vue';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  base: '/m-trade/', // Change to "/" if hosted at root
+  base: '/', // Change to "/" if hosted at root
   plugins: [vue()],
   build: {
     sourcemap: true, // Enable for better debugging in development

@@ -9,7 +9,7 @@ import {
   Message,
 } from 'primevue';
 import MarginSettings from './MarginSettings.vue';
-import { useSymbolStore } from '@/stores/symbolStore';
+import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 import { useMarginSettingsStore } from '@/stores/marginSettings';
 import { useAccountStore } from '@/stores/accountStore';
 import {
@@ -23,8 +23,8 @@ import ByBit from '@/api/bybit';
 // ----------------------------
 // Store Setup
 // ----------------------------
-const symbolStore = useSymbolStore();
-const { selectedSymbol } = storeToRefs(symbolStore);
+const instrumentInfoStore = useInstrumentInfoStore();
+const { selectedSymbol } = storeToRefs(instrumentInfoStore);
 const settings = storeToRefs(useMarginSettingsStore());
 const account = storeToRefs(useAccountStore());
 

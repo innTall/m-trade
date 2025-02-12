@@ -5,7 +5,7 @@ import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
 import SelectBaseAsset from './SelectBaseAsset.vue';
-import { useSymbolStore } from '@/stores/symbolStore';
+import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 
 // Function to initialize the WebSocket connection
 const initKlinesWebSocket = ({ symbol, interval, chart }) => {
@@ -72,8 +72,8 @@ const getChartData = async ({ symbol, interval, chart }) => {
   initKlinesWebSocket({ symbol, interval, chart });
 };
 
-const symbolStore = useSymbolStore();
-const { selectedSymbol } = storeToRefs(symbolStore);
+const instrumentInfoStore = useInstrumentInfoStore();
+const { selectedSymbol } = storeToRefs(instrumentInfoStore);
 
 const selectedInterval = ref('15');
 

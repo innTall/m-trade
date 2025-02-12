@@ -1,11 +1,12 @@
 <script setup>
 import { storeToRefs } from 'pinia';
 import { FloatLabel, Select } from 'primevue';
-import { useSymbolStore } from '@/stores/symbolStore';
+import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 
-const symbolStore = useSymbolStore();
-const { selectQuote } = symbolStore;
-const { quoteAssets, loading, selectedQuote } = storeToRefs(symbolStore);
+const instrumentInfoStore = useInstrumentInfoStore();
+const { selectQuote } = instrumentInfoStore;
+const { quoteAssets, loading, selectedQuote } =
+  storeToRefs(instrumentInfoStore);
 </script>
 
 <template>

@@ -16,7 +16,6 @@ export const useOrdersStore = defineStore('ordersStore', () => {
       const result = await ByBit.getOrders();
       if (result) {
         orders.value = result;
-        console.log('asas', result);
       } else {
         orders.value = [];
         error.value = 'No position info found.';
@@ -29,7 +28,6 @@ export const useOrdersStore = defineStore('ordersStore', () => {
   };
 
   const symbolsWithOpenOrders = computed(() => {
-    console.log(orders.value);
     if (!orders.value) return [];
     // Extract unique symbols where order status is open
     const symbolsObject = new Set();

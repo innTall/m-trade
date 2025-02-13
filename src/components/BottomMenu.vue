@@ -1,15 +1,22 @@
 <script setup>
 import { ref } from 'vue';
 import { Button, ButtonGroup } from 'primevue';
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
 
 // Define the buttons
 const buttons = ref([
-  { label: 'Home', icon: 'pi pi-home', action: () => navigateTo('home') },
-  { label: 'Search', icon: 'pi pi-search', action: () => navigateTo('search') },
+  { label: 'Home', icon: 'pi pi-home', action: () => navigateTo('') },
   {
-    label: 'Notifications',
-    icon: 'pi pi-bell',
-    action: () => navigateTo('notifications'),
+    label: 'Trading',
+    icon: 'pi pi-chart-line',
+    action: () => navigateTo('trading'),
+  },
+  {
+    label: 'Orders',
+    icon: 'pi pi-shopping-cart',
+    action: () => navigateTo('orders'),
   },
   { label: 'Profile', icon: 'pi pi-user', action: () => navigateTo('profile') },
 ]);
@@ -17,7 +24,7 @@ const buttons = ref([
 // Navigation function
 const navigateTo = route => {
   console.log(`Navigating to: ${route}`);
-  // Add your navigation logic here (e.g., using Vue Router)
+  router.push({ name: route });
 };
 </script>
 

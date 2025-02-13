@@ -13,13 +13,5 @@ export default async function cancelOrder({ symbol, orderId }) {
     }),
   });
 
-  if (
-    data?.result &&
-    Array.isArray(data.result.list) &&
-    data.result.list.length
-  ) {
-    return data.result.list;
-  } else {
-    return null;
-  }
+  return data.retMsg === 'OK';
 }

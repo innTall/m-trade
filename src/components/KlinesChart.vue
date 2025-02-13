@@ -74,6 +74,8 @@ const getChartData = async ({ symbol, interval, chart }) => {
 
 const instrumentInfoStore = useInstrumentInfoStore();
 const { selectedSymbol } = storeToRefs(instrumentInfoStore);
+const chartContainer = ref(0);
+const chartSettings = ref(0);
 
 const selectedInterval = ref('15');
 
@@ -95,9 +97,11 @@ const parseKlines = klines => {
 };
 
 onMounted(() => {
-  chart = createChart(document.getElementById('chart'), {
-    width: document.getElementById('chart').clientWidth,
-    height: '400',
+  const chartDiv = document.getElementById('chart');
+  chart = createChart(chartDiv, {
+    width: chartDiv.clientWidth,
+    height:
+      chartContainer.value.clientHeight - chartSettings.value.clientHeight,
     layout: {
       backgroundColor: '#ffffff',
       textColor: '#000000',
@@ -145,11 +149,11 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <div>
-    <div class="flex gap-2 my-1">
+  <div class="h-full" ref="chartContainer">
+    <div class="flex gap-2 my-1" ref="chartSettings">
       <SelectBaseAsset />
       <SelectInteval v-model="selectedInterval" />
     </div>
-    <div id="chart" class="w-full"></div>
+    <div id="chart"></div>
   </div>
 </template>

@@ -5,7 +5,7 @@ import ActiveSymbols from '@/components/ActiveSymbols.vue';
 </script>
 
 <template>
-  <div class="h-full">
+  <div class="flex flex-col h-screen">
     <ActiveSymbols />
     <KlinesChart />
     <OrderPlacement />

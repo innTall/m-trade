@@ -45,9 +45,14 @@ const getBadgeSeverity = unrealisedPnl => {
 </script>
 
 <template>
-  <div>
-    <p v-if="activeSymbols.length === 0">No active symbols</p>
-    <div v-else class="flex">
+  <div class="h-[3rem]">
+    <div
+      v-if="activeSymbols.length === 0"
+      class="flex items-center justify-center"
+    >
+      No active symbols
+    </div>
+    <div v-else>
       <div class="flex overflow-x-auto">
         <ButtonGroup>
           <Button
@@ -57,7 +62,7 @@ const getBadgeSeverity = unrealisedPnl => {
             :badge="parseFloat(position.unrealisedPnl).toFixed(2)"
             :badgeSeverity="getBadgeSeverity(position.unrealisedPnl)"
             severity="contrast"
-            variant="outlined"
+            variant="text"
             size="small"
           />
         </ButtonGroup>

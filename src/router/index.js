@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import MarginTrade from '../views/MarginTrade.vue';
+import TradingPage from '../views/TradingPage.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/',
-      name: 'MarginTrade',
-      component: MarginTrade,
+      path: '/trading',
+      name: 'trading',
+      component: TradingPage,
     },
   ],
 });

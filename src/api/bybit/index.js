@@ -3,7 +3,7 @@ import getKlines from './getKlines';
 import getAccountInfo from './getAccountInfo';
 import placeOrder from './placeOrder';
 import cancelOrder from './cancelOrder';
-import getOrderHistory from './getOrderHistory';
+import getOrders from './getOrders';
 import setLeverage from './setLeverage';
 import cancelAllOrders from './cancelAllOrders';
 import getPositionInfo from './getPositionInfo';
@@ -14,7 +14,7 @@ const ByBit = {
   getAccountInfo,
   placeOrder,
   cancelOrder,
-  getOrderHistory,
+  getOrders,
   setLeverage,
   cancelAllOrders,
   getPositionInfo,

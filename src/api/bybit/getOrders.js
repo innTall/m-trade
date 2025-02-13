@@ -1,11 +1,12 @@
-import fetchWrapper from './fetchWrapper.js';
-// https://bybit-exchange.github.io/docs/v5/order/open-order
-export default async function getOrders({ symbol }) {
-  const path = '/open-order';
-  const query = `category=linear&symbol=${symbol}`;
+import fetchWrapper from './fetchWrapper';
+// https://bybit-exchange.github.io/docs/v5/order/realtime
+export default async function getOrders() {
+  const path = '/order/realtime';
+  const query = `category=linear&settleCoin=USDT`;
   const data = await fetchWrapper({
     path,
     query,
+    isPrivate: true,
   });
 
   if (

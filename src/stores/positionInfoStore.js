@@ -1,6 +1,6 @@
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { defineStore } from 'pinia';
-import ByBit from '@/api/bybit'; // Adjust the import path to your `getSymbols` function
+import ByBit from '@/api/bybit';
 
 export const usePositionInfoStore = defineStore('positionInfoStore', () => {
   const positionInfo = ref(null);
@@ -27,12 +27,26 @@ export const usePositionInfoStore = defineStore('positionInfoStore', () => {
     }
   };
 
+  const openPositionsWithPnl = computed(() => {
+    if (!positionInfo.value) return [];
+    return positionInfo.value.map(({ symbol, unrealisedPnl }) => {
+      return {
+        baseAsset: symbol.split('USDT')[0],
+        symbol,
+        unrealisedPnl,
+      };
+    });
+  });
+
   onMounted(async () => {
     await fetchPositionInfo();
+    setInterval(async () => {
+      await fetchPositionInfo();
+    }, 30000);
   });
 
   return {
-    positionInfo,
+    openPositionsWithPnl,
     fetchPositionInfo,
   };
 });

@@ -39,6 +39,9 @@ export const useAccountStore = defineStore('accountStore', () => {
 
   onMounted(async () => {
     await fetchAccount();
+    setInterval(async () => {
+      await fetchAccount();
+    }, 30000);
   });
 
   return {

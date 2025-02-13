@@ -13,7 +13,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   const instrumentInfo = ref([]);
   const loading = ref(false);
   const error = ref(null);
-  const selectedQuote = ref(null);
+  const selectedQuote = ref('USDT');
   const selectedSymbol = ref(null);
 
   // Actions
@@ -36,12 +36,6 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     }
   };
 
-  const quoteAssets = computed(() => {
-    return Array.from(
-      new Set(instrumentInfo.value.map(item => item.quoteCoin))
-    );
-  });
-
   // Computed Getters
   const baseAssets = computed(() => {
     return instrumentInfo.value.filter(({ quoteCoin }) => {
@@ -49,20 +43,9 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     });
   });
 
-  const selectQuote = quote => {
-    selectedQuote.value = quote;
-  };
-
   const selectSymbol = symbol => {
     selectedSymbol.value = symbol;
   };
-
-  watch(
-    () => quoteAssets.value,
-    newValue => {
-      selectedQuote.value = newValue[0];
-    }
-  );
 
   watch(
     () => baseAssets.value,
@@ -78,9 +61,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     baseAssets,
     selectedQuote,
     selectedSymbol,
-    quoteAssets,
     fetchInstrumentInfo,
-    selectQuote,
     selectSymbol,
   };
 });

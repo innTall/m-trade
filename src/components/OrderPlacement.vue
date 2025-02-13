@@ -200,89 +200,87 @@ watch(price, () => {
 </script>
 
 <template>
-  <div class="p-2 space-y-2">
-    <!-- Order Inputs -->
-    <div class="p-1 rounded-lg">
-      <div class="flex flex-row items-center justify-between">
-        <div>
-          <ToggleButton
-            v-model="isLong"
-            onLabel="Long"
-            offLabel="Short"
-            class="w-20"
-          />
-        </div>
-        <div class="flex">
-          <Button
-            @click="resetOrder"
-            icon="pi pi-refresh"
-            severity="contrast"
-            variant="text"
-            rounded
-            aria-label="Refresh"
-          />
-          <MarginSettings />
-        </div>
+  <!-- Order Inputs -->
+  <div class="p-2 rounded-lg">
+    <div class="flex flex-row items-center justify-between">
+      <div>
+        <ToggleButton
+          v-model="isLong"
+          onLabel="Long"
+          offLabel="Short"
+          class="w-20"
+        />
       </div>
-      <div class="grid grid-cols-2 gap-x-2 gap-y-4 pt-4">
-        <div>
-          <FloatLabel variant="on">
-            <InputNumber
-              v-model.number="orderSize"
-              :defaultValue="calculatedOrderSize"
-              inputId="positionSize"
-              size="small"
-              :min="Number(selectedSymbol?.lotSizeFilter.minOrderAmt)"
-              :max="Number(selectedSymbol?.lotSizeFilter.maxOrderAmt)"
-              showButtons
-              fluid
-            />
-            <label for="positionSize">Position Size</label>
-          </FloatLabel>
-          <Message size="small" severity="secondary" variant="simple">
-            Default: {{ calculatedOrderSize }}
-          </Message>
-        </div>
-        <div>
-          <FloatLabel variant="on">
-            <InputNumber
-              v-model.number="price"
-              inputId="price"
-              size="small"
-              :step="Number(selectedSymbol?.priceFilter.tickSize)"
-              showButtons
-              fluid
-            />
-            <label for="price">Price</label>
-          </FloatLabel>
-          <Message size="small" severity="secondary" variant="simple">
-            Zero: {{ zeroPrice }}
-          </Message>
-        </div>
-        <div>
-          <FloatLabel variant="on">
-            <InputNumber
-              v-model="stopLoss"
-              :defaultValue="calculatedStopLoss"
-              inputId="stopLoss"
-              size="small"
-              showButtons
-              fluid
-            />
-            <label for="stopLoss">Stop Loss</label>
-          </FloatLabel>
-          <Message size="small" severity="secondary" variant="simple">
-            Default: {{ calculatedStopLoss }}
-          </Message>
-        </div>
-        <div>
-          <Button
-            @click="sendOrder"
-            label="Place Order"
-            class="w-full"
+      <div class="flex">
+        <Button
+          @click="resetOrder"
+          icon="pi pi-refresh"
+          severity="contrast"
+          variant="text"
+          rounded
+          aria-label="Refresh"
+        />
+        <MarginSettings />
+      </div>
+    </div>
+    <div class="grid grid-cols-2 gap-x-2 gap-y-4 pt-4">
+      <div>
+        <FloatLabel variant="on">
+          <InputNumber
+            v-model.number="orderSize"
+            :defaultValue="calculatedOrderSize"
+            inputId="positionSize"
             size="small"
+            :min="Number(selectedSymbol?.lotSizeFilter.minOrderAmt)"
+            :max="Number(selectedSymbol?.lotSizeFilter.maxOrderAmt)"
+            showButtons
+            fluid
           />
-        </div>
+          <label for="positionSize">Position Size</label>
+        </FloatLabel>
+        <Message size="small" severity="secondary" variant="simple">
+          Default: {{ calculatedOrderSize }}
+        </Message>
+      </div>
+      <div>
+        <FloatLabel variant="on">
+          <InputNumber
+            v-model.number="price"
+            inputId="price"
+            size="small"
+            :step="Number(selectedSymbol?.priceFilter.tickSize)"
+            showButtons
+            fluid
+          />
+          <label for="price">Price</label>
+        </FloatLabel>
+        <Message size="small" severity="secondary" variant="simple">
+          Zero: {{ zeroPrice }}
+        </Message>
+      </div>
+      <div>
+        <FloatLabel variant="on">
+          <InputNumber
+            v-model="stopLoss"
+            :defaultValue="calculatedStopLoss"
+            inputId="stopLoss"
+            size="small"
+            showButtons
+            fluid
+          />
+          <label for="stopLoss">Stop Loss</label>
+        </FloatLabel>
+        <Message size="small" severity="secondary" variant="simple">
+          Default: {{ calculatedStopLoss }}
+        </Message>
+      </div>
+      <div>
+        <Button
+          @click="sendOrder"
+          label="Place Order"
+          class="w-full"
+          size="small"
+        />
       </div>
     </div>
   </div>

@@ -45,12 +45,18 @@ const getBadgeSeverity = unrealisedPnl => {
 </script>
 
 <template>
-  <div class="h-[3rem]">
+  <div>
     <div
       v-if="activeSymbols.length === 0"
       class="flex items-center justify-center"
     >
-      No active symbols
+      <Button
+        label="No active symbols"
+        variant="text"
+        size="small"
+        disabled
+        severity="secondary"
+      />
     </div>
     <div v-else>
       <div class="flex overflow-x-auto">

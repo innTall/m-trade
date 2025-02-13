@@ -4,19 +4,19 @@ defineProps(['modelValue']);
 const emit = defineEmits(['update:modelValue']);
 
 const intervals = [
-  '1', // 1 minute
-  '3', // 3 minutes
+  // '1', // 1 minute
+  // '3', // 3 minutes
   '5', // 5 minutes
   '15', // 15 minutes
-  '30', // 30 minutes
+  // '30', // 30 minutes
   '60', // 1 hour
-  '120', // 2 hours
+  // '120', // 2 hours
   '240', // 4 hours
-  '360', // 6 hours
-  '720', // 12 hours
+  // '360', // 6 hours
+  // '720', // 12 hours
   'D', // 1 day
-  'M', // 1 month
-  'W', // 1 week
+  // 'M', // 1 month
+  // 'W', // 1 week
 ];
 
 const intervalMap = new Map([

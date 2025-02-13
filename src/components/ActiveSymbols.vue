@@ -70,6 +70,7 @@ const getBadgeSeverity = unrealisedPnl => {
             severity="contrast"
             variant="text"
             size="small"
+            class="!rounded-none"
           />
         </ButtonGroup>
       </div>

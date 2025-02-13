@@ -33,18 +33,16 @@ watch(selectedSymbol, async newSymbol => {
 </script>
 
 <template>
-  <div
-    v-for="(order, index) in orders"
-    :key="index"
-    class="h-full overflow-y-auto p-2"
-  >
+  <div v-for="(order, index) in orders" :key="index" class="p-2">
     <div class="flex items-center">
       <div class="flex-grow">
         <div class="flex justify-between">
           <div class="px-2">
             {{ order.side }} {{ order.orderType }} ({{ order.orderStatus }})
           </div>
-          <div class="px-2">Price: {{ order.price }}</div>
+          <div class="px-2">
+            Price: {{ order.price === '0' ? order.triggerPrice : order.price }}
+          </div>
         </div>
 
         <div class="flex justify-between">

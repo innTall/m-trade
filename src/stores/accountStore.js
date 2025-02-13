@@ -1,4 +1,4 @@
-import { computed, ref } from 'vue';
+import { computed, onMounted, ref } from 'vue';
 import { defineStore } from 'pinia';
 import ByBit from '@/api/bybit'; // Adjust the import path to your `getSymbols` function
 
@@ -35,6 +35,10 @@ export const useAccountStore = defineStore('accountStore', () => {
       );
     }
     return '0';
+  });
+
+  onMounted(async () => {
+    await fetchAccount();
   });
 
   return {

@@ -1,4 +1,4 @@
-import { ref, computed, watch } from 'vue';
+import { ref, computed, watch, onMounted } from 'vue';
 import { defineStore } from 'pinia';
 import ByBit from '@/api/bybit'; // Adjust the import path to your `getinstrumentInfo` function
 
@@ -53,6 +53,10 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
       selectedSymbol.value = newValue[0];
     }
   );
+
+  onMounted(async () => {
+    await fetchInstrumentInfo();
+  });
 
   return {
     instrumentInfo,

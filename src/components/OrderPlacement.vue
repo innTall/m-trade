@@ -200,7 +200,7 @@ watch(price, () => {
 </script>
 
 <template>
-  <div class="max-w-4xl mx-auto p-1 space-y-2">
+  <div class="p-2 space-y-2">
     <!-- Order Inputs -->
     <div class="p-1 rounded-lg">
       <div class="flex flex-row items-center justify-between">

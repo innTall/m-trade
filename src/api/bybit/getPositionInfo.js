@@ -1,11 +1,12 @@
 import fetchWrapper from './fetchWrapper.js';
 // https://bybit-exchange.github.io/docs/v5/position
-export default async function getPositionInfo({ symbol }) {
-  const path = '/position';
-  const query = `category=linear&symbol=${symbol}`;
+export default async function getPositionInfo() {
+  const path = '/position/list';
+  const query = `category=linear&settleCoin=USDT`;
   const data = await fetchWrapper({
     path,
     query,
+    isPrivate: true,
   });
 
   if (

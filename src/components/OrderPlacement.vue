@@ -19,6 +19,12 @@ import {
   formatToPrecision,
 } from '../helpers';
 import ByBit from '@/api/bybit';
+import { useToast } from 'primevue/usetoast';
+
+// ----------------------------
+// Services
+// ----------------------------
+const toast = useToast();
 
 // ----------------------------
 // Store Setup
@@ -171,12 +177,32 @@ const sendOrder = async () => {
     return;
   }
 
+  const showSuccess = () => {
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Order placed',
+      life: 3000,
+    });
+  };
+
+  const showError = () => {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Order is not placed',
+      life: 3000,
+    });
+  };
+
   await ByBit.setLeverage({
     symbol: order.value.symbol,
     leverage: settings.leverage.value.toString(),
   });
 
-  await ByBit.placeOrder(order.value);
+  const isPlaced = await ByBit.placeOrder(order.value);
+
+  isPlaced ? showSuccess() : showError();
 };
 
 // Reset manual input to calculated values(strategy)

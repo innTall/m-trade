@@ -3,6 +3,7 @@ import { createPinia } from 'pinia';
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
 import PrimeVue from 'primevue/config';
 import Aura from '@primevue/themes/aura';
+import ToastService from 'primevue/toastservice';
 
 import App from './App.vue';
 import router from './router/index.js';
@@ -21,6 +22,7 @@ app
       preset: Aura,
     },
   })
+  .use(ToastService)
   .use(pinia)
   .use(router)
   .mount('#app');

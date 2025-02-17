@@ -5,6 +5,12 @@ import { Button, Dialog, InputNumber, Divider } from 'primevue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 import { useOrdersStore } from '@/stores/ordersStore';
 import ByBit from '@/api/bybit';
+import { useToast } from 'primevue/usetoast';
+
+// ----------------------------
+// Services
+// ----------------------------
+const toast = useToast();
 
 const instrumentInfoStore = useInstrumentInfoStore();
 const ordersStore = useOrdersStore();
@@ -22,12 +28,36 @@ const selectedSymbolOrders = computed(() => {
   );
 });
 
+const showSuccess = () => {
+  toast.add({
+    severity: 'success',
+    summary: 'Success',
+    detail: 'Order canceled',
+    life: 3000,
+  });
+};
+
+const showError = () => {
+  toast.add({
+    severity: 'error',
+    summary: 'Error',
+    detail: 'Order is not canceled',
+    life: 3000,
+  });
+};
+
 const cancelOrder = async orderId => {
-  await ByBit.cancelOrder(orderId);
+  const isCanceled = await ByBit.cancelOrder(orderId);
+  if (!isCanceled) showError();
+  showSuccess();
+  await ordersStore.fetchOrders();
 };
 
 const cancellAllOrders = async () => {
-  await ByBit.cancelAllOrders(selectedSymbol.value.symbol);
+  const isCanceled = await ByBit.cancelAllOrders(selectedSymbol.value.symbol);
+  if (!isCanceled) return showError();
+  showSuccess();
+  await ordersStore.fetchOrders();
 };
 
 const openPosition = pos => {

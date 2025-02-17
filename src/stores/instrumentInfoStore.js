@@ -35,6 +35,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   };
 
   const selectBaseCoin = baseCoin => {
+    console.log(baseCoin);
     selectedBaseCoin.value = baseCoin;
   };
 
@@ -47,9 +48,13 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
       .map(({ baseCoin }) => baseCoin);
   });
 
+  const selectedSymbol = computed(() => {
+    return `${selectedBaseCoin.value}${selectedQuoteCoin.value}`;
+  });
+
   const selectedInstrument = computed(() => {
     return instrumentInfo.value.find(({ symbol }) => {
-      return symbol === `${selectedBaseCoin.value}${selectedQuoteCoin.value}`;
+      return symbol === selectedSymbol.value;
     });
   });
 
@@ -65,6 +70,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     selectedBaseCoin,
     selectedQuoteCoin,
     selectedInstrument,
+    selectedSymbol,
     fetchInstrumentInfo,
     selectBaseCoin,
   };

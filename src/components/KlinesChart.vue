@@ -73,7 +73,7 @@ const getChartData = async ({ symbol, interval, chart }) => {
 };
 
 const instrumentInfoStore = useInstrumentInfoStore();
-const { selectedInstrument } = storeToRefs(instrumentInfoStore);
+const { selectedSymbol } = storeToRefs(instrumentInfoStore);
 const chartContainer = ref(0);
 const chartSettings = ref(0);
 
@@ -121,26 +121,21 @@ onMounted(() => {
 
 onMounted(async () => {
   await getChartData({
-    symbol: selectedInstrument.symbol || 'BTCUSDT',
+    symbol: selectedSymbol.value,
     interval: selectedInterval.value,
     chart: candlestickSeries,
   });
 });
 
 // Watchers for symbol and interval changes
-watch(
-  [selectedInstrument, selectedInterval],
-  async ([newSymbol, newInterval]) => {
-    console.log(
-      `Symbol or interval changed: ${newSymbol.symbol}, ${newInterval}`
-    );
-    await getChartData({
-      symbol: newSymbol.symbol || 'BTCUSDT',
-      interval: newInterval,
-      chart: candlestickSeries,
-    });
-  }
-);
+watch([selectedSymbol, selectedInterval], async ([newSymbol, newInterval]) => {
+  console.log(`Symbol or interval changed: ${newSymbol}, ${newInterval}`);
+  await getChartData({
+    symbol: newSymbol,
+    interval: newInterval,
+    chart: candlestickSeries,
+  });
+});
 
 // Resize chart
 watch(chartContainer, (newValue, oldValue) => {

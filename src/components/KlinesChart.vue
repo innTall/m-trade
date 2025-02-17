@@ -98,6 +98,11 @@ const parseKlines = klines => {
 
 onMounted(() => {
   const chartDiv = document.getElementById('chart');
+  console.log(
+    chartContainer.value,
+    chartContainer.value.clientHeight,
+    chartSettings.value.clientHeight
+  );
   chart = createChart(chartDiv, {
     width: chartDiv.clientWidth,
     height:
@@ -139,6 +144,15 @@ watch([selectedSymbol, selectedInterval], async ([newSymbol, newInterval]) => {
   });
 });
 
+// Resize chart
+watch(chartContainer, (newValue, oldValue) => {
+  if (newValue.clientHeight !== oldValue.clientHeight) {
+    const chartDiv = document.getElementById('chart');
+    const height = newValue.clientHeight - chartSettings.value.clientHeight;
+    chart.resize(chartDiv.clientWidth, height);
+  }
+});
+
 onBeforeUnmount(() => {
   if (ws) {
     ws.close();
@@ -150,7 +164,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div class="h-full" ref="chartContainer">
-    <div class="flex gap-2 my-1" ref="chartSettings">
+    <div class="flex gap-2 py-1" ref="chartSettings">
       <SelectBaseAsset />
       <SelectInteval v-model="selectedInterval" />
     </div>

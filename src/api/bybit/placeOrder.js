@@ -8,13 +8,6 @@ export default async function placeOrder(order) {
     method: 'POST',
     body: JSON.stringify(order),
   });
-  if (
-    data?.result &&
-    Array.isArray(data.result.list) &&
-    data.result.list.length
-  ) {
-    return data.result.list;
-  } else {
-    return null;
-  }
+
+  return data.retMsg === 'OK';
 }

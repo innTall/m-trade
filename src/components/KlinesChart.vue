@@ -98,11 +98,6 @@ const parseKlines = klines => {
 
 onMounted(() => {
   const chartDiv = document.getElementById('chart');
-  console.log(
-    chartContainer.value,
-    chartContainer.value.clientHeight,
-    chartSettings.value.clientHeight
-  );
   chart = createChart(chartDiv, {
     width: chartDiv.clientWidth,
     height:

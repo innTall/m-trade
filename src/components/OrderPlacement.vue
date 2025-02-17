@@ -20,17 +20,20 @@ import {
 } from '../helpers';
 import ByBit from '@/api/bybit';
 import { useToast } from 'primevue/usetoast';
+import { useRouter } from 'vue-router';
 
 // ----------------------------
 // Services
 // ----------------------------
 const toast = useToast();
+const router = useRouter();
 
 // ----------------------------
 // Store Setup
 // ----------------------------
 const instrumentInfoStore = useInstrumentInfoStore();
-const { selectedInstrument } = storeToRefs(instrumentInfoStore);
+const { selectedInstrument, selectedBaseCoin } =
+  storeToRefs(instrumentInfoStore);
 const settings = storeToRefs(useMarginSettingsStore());
 const account = storeToRefs(useAccountStore());
 
@@ -229,15 +232,26 @@ watch(price, () => {
   <!-- Order Inputs -->
   <div class="p-2 rounded-lg">
     <div class="flex flex-row items-center justify-between">
-      <div>
+      <div class="space-x-2">
         <ToggleButton
           v-model="isLong"
           onLabel="Long"
           offLabel="Short"
           class="w-20"
         />
+        <Button
+          label="Orders"
+          size="small"
+          severity="secondary"
+          @click="
+            router.push({
+              name: 'orders',
+              query: { baseCoin: selectedBaseCoin },
+            })
+          "
+        />
       </div>
-      <div class="flex">
+      <div class="flex flex-row">
         <Button
           @click="resetOrder"
           icon="pi pi-refresh"

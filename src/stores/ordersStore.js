@@ -3,7 +3,7 @@ import { defineStore } from 'pinia';
 import ByBit from '@/api/bybit'; // Adjust the import path to your `getSymbols` function
 
 export const useOrdersStore = defineStore('ordersStore', () => {
-  const orders = ref(null);
+  const orders = ref([]);
   const loading = ref(false);
   const error = ref(null);
 
@@ -15,6 +15,7 @@ export const useOrdersStore = defineStore('ordersStore', () => {
     try {
       const result = await ByBit.getOrders();
       if (result) {
+        console.log(result);
         orders.value = result;
       } else {
         orders.value = [];

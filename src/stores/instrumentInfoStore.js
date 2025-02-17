@@ -35,7 +35,6 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   };
 
   const selectBaseCoin = baseCoin => {
-    console.log(baseCoin);
     selectedBaseCoin.value = baseCoin;
   };
 

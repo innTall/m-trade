@@ -1,20 +1,14 @@
-import { ref, computed, watch, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { defineStore } from 'pinia';
 import ByBit from '@/api/bybit'; // Adjust the import path to your `getinstrumentInfo` function
-
-const filterInstrumentInfo = array => {
-  return array.filter(({ contractType, isPreListing }) => {
-    return contractType === 'LinearPerpetual' && !isPreListing;
-  });
-};
 
 export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   // State
   const instrumentInfo = ref([]);
   const loading = ref(false);
   const error = ref(null);
-  const selectedQuote = ref('USDT');
-  const selectedSymbol = ref(null);
+  const selectedQuoteCoin = ref('USDT'); //default
+  const selectedBaseCoin = ref('BTC'); //default
 
   // Actions
   const fetchInstrumentInfo = async () => {
@@ -24,7 +18,11 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     try {
       const result = await ByBit.getInstrumentsInfo();
       if (result) {
-        instrumentInfo.value = filterInstrumentInfo(result);
+        instrumentInfo.value = result.filter(
+          ({ contractType, isPreListing }) => {
+            return contractType === 'LinearPerpetual' && !isPreListing;
+          }
+        );
       } else {
         instrumentInfo.value = [];
         error.value = 'No instrumentInfo found.';
@@ -36,23 +34,24 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     }
   };
 
-  // Computed Getters
-  const baseAssets = computed(() => {
-    return instrumentInfo.value.filter(({ quoteCoin }) => {
-      return quoteCoin === selectedQuote.value;
-    });
-  });
-
-  const selectSymbol = symbol => {
-    selectedSymbol.value = symbol;
+  const selectBaseCoin = baseCoin => {
+    selectedBaseCoin.value = baseCoin;
   };
 
-  watch(
-    () => baseAssets.value,
-    newValue => {
-      selectedSymbol.value = newValue[0];
-    }
-  );
+  // Computed Getters
+  const baseCoinList = computed(() => {
+    return instrumentInfo.value
+      .filter(({ quoteCoin }) => {
+        return quoteCoin === selectedQuoteCoin.value;
+      })
+      .map(({ baseCoin }) => baseCoin);
+  });
+
+  const selectedInstrument = computed(() => {
+    return instrumentInfo.value.find(({ symbol }) => {
+      return symbol === `${selectedBaseCoin.value}${selectedQuoteCoin.value}`;
+    });
+  });
 
   onMounted(async () => {
     await fetchInstrumentInfo();
@@ -62,10 +61,11 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
     instrumentInfo,
     loading,
     error,
-    baseAssets,
-    selectedQuote,
-    selectedSymbol,
+    baseCoinList,
+    selectedBaseCoin,
+    selectedQuoteCoin,
+    selectedInstrument,
     fetchInstrumentInfo,
-    selectSymbol,
+    selectBaseCoin,
   };
 });

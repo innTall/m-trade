@@ -3,6 +3,7 @@ import { computed } from 'vue';
 import { Button, ButtonGroup } from 'primevue';
 import { usePositionInfoStore } from '@/stores/positionInfoStore';
 import { useOrdersStore } from '@/stores/ordersStore';
+import { useInstrumentInfoStore } from '../stores/instrumentInfoStore';
 import { storeToRefs } from 'pinia';
 
 /**
@@ -20,18 +21,19 @@ import { storeToRefs } from 'pinia';
 const mergeArrays = (mainArray, pnlArray) => {
   // Convert pnlArray into a Map for quick lookup
   const pnlMap = new Map(
-    pnlArray.map(item => [item.baseAsset, item.unrealisedPnl])
+    pnlArray.map(item => [item.baseCoin, item.unrealisedPnl])
   );
 
   // Merge the two arrays
   return mainArray.map(item => ({
     ...item,
-    unrealisedPnl: pnlMap.get(item.baseAsset) || '0', // Default to "0" if no match
+    unrealisedPnl: pnlMap.get(item.baseCoin) || '0', // Default to "0" if no match
   }));
 };
 
 const positionInfoStore = usePositionInfoStore();
 const ordersStore = useOrdersStore();
+const instrumentInfoStore = useInstrumentInfoStore();
 const { openPositionsWithPnl } = storeToRefs(positionInfoStore);
 const { symbolsWithOpenOrders } = storeToRefs(ordersStore);
 
@@ -63,14 +65,15 @@ const getBadgeSeverity = unrealisedPnl => {
         <ButtonGroup>
           <Button
             v-for="position in activeSymbols"
-            :key="position.id"
-            :label="position.baseAsset"
+            :key="position.symbol"
+            :label="position.baseCoin"
             :badge="parseFloat(position.unrealisedPnl).toFixed(2)"
             :badgeSeverity="getBadgeSeverity(position.unrealisedPnl)"
             severity="contrast"
             variant="text"
             size="small"
             class="!rounded-none"
+            @click="instrumentInfoStore.selectBaseCoin(position.baseCoin)"
           />
         </ButtonGroup>
       </div>

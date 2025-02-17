@@ -30,7 +30,7 @@ const toast = useToast();
 // Store Setup
 // ----------------------------
 const instrumentInfoStore = useInstrumentInfoStore();
-const { selectedSymbol } = storeToRefs(instrumentInfoStore);
+const { selectedInstrument } = storeToRefs(instrumentInfoStore);
 const settings = storeToRefs(useMarginSettingsStore());
 const account = storeToRefs(useAccountStore());
 
@@ -46,7 +46,7 @@ const zeroPrice = computed(() => {
   const totalFactors = calculateTotalFactor([settings.coefExtra.value]);
   if (!price.value) return null;
   const calculatedPrice = price.value * totalFactors;
-  const precision = selectedSymbol.value.priceFilter.tickSize;
+  const precision = selectedInstrument.value.priceFilter.tickSize;
   return formatToPrecision(calculatedPrice, precision);
 });
 
@@ -61,8 +61,8 @@ const calculatedOrderSize = computed(() => {
 });
 
 const quantity = computed(() => {
-  if (!price.value || !selectedSymbol.value) return null;
-  const lotSizeFilter = selectedSymbol.value.lotSizeFilter;
+  if (!price.value || !selectedInstrument.value) return null;
+  const lotSizeFilter = selectedInstrument.value.lotSizeFilter;
   const precision = lotSizeFilter.qtyStep;
   const { fullQty, gridQty } = calculateOrderQty({
     amount: orderSize.value,
@@ -85,9 +85,9 @@ const totalFactorForSL = computed(() => {
 });
 
 const calculatedStopLoss = computed(() => {
-  if (!price.value || !selectedSymbol.value) return null;
+  if (!price.value || !selectedInstrument.value) return null;
   const isTakeProfit = false;
-  const precision = selectedSymbol.value.priceFilter.tickSize;
+  const precision = selectedInstrument.value.priceFilter.tickSize;
   const priceLevel = calculatePriceLevel(
     price.value,
     totalFactorForSL.value,
@@ -125,9 +125,9 @@ const calculatedStopLoss = computed(() => {
 // });
 
 // const calculateTakeProfitPrice = takeProfitFactor => {
-//   if (!price.value || !selectedSymbol.value) return null;
+//   if (!price.value || !selectedInstrument.value) return null;
 //   const isTakeProfit = true;
-//   const precision = selectedSymbol.value.priceFilter.tickSize;
+//   const precision = selectedInstrument.value.priceFilter.tickSize;
 //   const priceLevel = calculatePriceLevel(
 //     price.value,
 //     calculateTotalFactor([takeProfitFactor, settings.coefExtra.value]),
@@ -139,7 +139,7 @@ const calculatedStopLoss = computed(() => {
 
 const order = computed(() => {
   return {
-    symbol: selectedSymbol.value.symbol,
+    symbol: selectedInstrument.value.symbol,
     side: isLong.value ? 'Buy' : 'Sell',
     qty: quantity.value.fullQty,
     price: price.value.toString(),
@@ -154,7 +154,7 @@ const order = computed(() => {
 //   try {
 //     return takeProfitGrid.value.map(takeProfitFactor => {
 //       return {
-//         symbol: selectedSymbol.value.symbol,
+//         symbol: selectedInstrument.value.symbol,
 //         side: isLong.value ? 'Buy' : 'Sell',
 //         qty: quantity.value.toString(),
 //         price: price.value.toString(),
@@ -257,8 +257,8 @@ watch(price, () => {
             :defaultValue="calculatedOrderSize"
             inputId="positionSize"
             size="small"
-            :min="Number(selectedSymbol?.lotSizeFilter.minOrderAmt)"
-            :max="Number(selectedSymbol?.lotSizeFilter.maxOrderAmt)"
+            :min="Number(selectedInstrument?.lotSizeFilter.minOrderAmt)"
+            :max="Number(selectedInstrument?.lotSizeFilter.maxOrderAmt)"
             showButtons
             fluid
           />
@@ -274,7 +274,7 @@ watch(price, () => {
             v-model.number="price"
             inputId="price"
             size="small"
-            :step="Number(selectedSymbol?.priceFilter.tickSize)"
+            :step="Number(selectedInstrument?.priceFilter.tickSize)"
             showButtons
             fluid
           />

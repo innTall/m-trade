@@ -31,7 +31,7 @@ export const usePositionInfoStore = defineStore('positionInfoStore', () => {
     if (!positionInfo.value) return [];
     return positionInfo.value.map(({ symbol, unrealisedPnl }) => {
       return {
-        baseAsset: symbol.split('USDT')[0],
+        baseCoin: symbol.split('USDT')[0],
         symbol,
         unrealisedPnl,
       };

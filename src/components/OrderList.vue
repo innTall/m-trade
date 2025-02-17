@@ -14,17 +14,16 @@ const toast = useToast();
 
 const instrumentInfoStore = useInstrumentInfoStore();
 const ordersStore = useOrdersStore();
-const { selectedSymbol } = storeToRefs(instrumentInfoStore);
+const { selectedInstrument } = storeToRefs(instrumentInfoStore);
 const { orders } = storeToRefs(ordersStore);
 
 const position = ref('center');
 const visible = ref(false);
 
-const selectedSymbolOrders = computed(() => {
-  console.log(selectedSymbol.value.symbol);
-  if (!selectedSymbol.value) return [];
+const selectedInstrumentOrders = computed(() => {
+  if (!selectedInstrument.value) return [];
   return orders.value.filter(
-    order => order.symbol === selectedSymbol.value.symbol
+    order => order.symbol === selectedInstrument.value.symbol
   );
 });
 
@@ -54,7 +53,9 @@ const cancelOrder = async orderId => {
 };
 
 const cancellAllOrders = async () => {
-  const isCanceled = await ByBit.cancelAllOrders(selectedSymbol.value.symbol);
+  const isCanceled = await ByBit.cancelAllOrders(
+    selectedInstrument.value.symbol
+  );
   if (!isCanceled) return showError();
   showSuccess();
   await ordersStore.fetchOrders();
@@ -82,14 +83,14 @@ const openPosition = pos => {
         />
       </div>
     </div>
-    <div v-if="selectedSymbolOrders.length === 0" class="p-2">
+    <div v-if="selectedInstrumentOrders.length === 0" class="p-2">
       <p class="text-center">
-        There is no open orders for {{ selectedSymbol.symbol }}
+        There is no open orders for {{ selectedInstrument.symbol }}
       </p>
     </div>
     <div
       v-else
-      v-for="(order, index) in selectedSymbolOrders"
+      v-for="(order, index) in selectedInstrumentOrders"
       :key="index"
       class="p-2 border border-sm rounded-lg m-2"
     >

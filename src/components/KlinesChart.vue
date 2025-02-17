@@ -4,7 +4,7 @@ import { storeToRefs } from 'pinia';
 import { createChart } from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
-import SelectBaseAsset from './SelectBaseAsset.vue';
+import SelectBaseAsset from './SelectBaseCoin.vue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 
 // Function to initialize the WebSocket connection
@@ -73,7 +73,7 @@ const getChartData = async ({ symbol, interval, chart }) => {
 };
 
 const instrumentInfoStore = useInstrumentInfoStore();
-const { selectedSymbol } = storeToRefs(instrumentInfoStore);
+const { selectedInstrument } = storeToRefs(instrumentInfoStore);
 const chartContainer = ref(0);
 const chartSettings = ref(0);
 
@@ -121,23 +121,26 @@ onMounted(() => {
 
 onMounted(async () => {
   await getChartData({
-    symbol: selectedSymbol.symbol || 'BTCUSDT',
+    symbol: selectedInstrument.symbol || 'BTCUSDT',
     interval: selectedInterval.value,
     chart: candlestickSeries,
   });
 });
 
 // Watchers for symbol and interval changes
-watch([selectedSymbol, selectedInterval], async ([newSymbol, newInterval]) => {
-  console.log(
-    `Symbol or interval changed: ${newSymbol.symbol}, ${newInterval}`
-  );
-  await getChartData({
-    symbol: newSymbol.symbol || 'BTCUSDT',
-    interval: newInterval,
-    chart: candlestickSeries,
-  });
-});
+watch(
+  [selectedInstrument, selectedInterval],
+  async ([newSymbol, newInterval]) => {
+    console.log(
+      `Symbol or interval changed: ${newSymbol.symbol}, ${newInterval}`
+    );
+    await getChartData({
+      symbol: newSymbol.symbol || 'BTCUSDT',
+      interval: newInterval,
+      chart: candlestickSeries,
+    });
+  }
+);
 
 // Resize chart
 watch(chartContainer, (newValue, oldValue) => {

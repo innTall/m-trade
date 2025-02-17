@@ -4,18 +4,17 @@ import { Select } from 'primevue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 
 const instrumentInfoStore = useInstrumentInfoStore();
-const { selectSymbol } = instrumentInfoStore;
-const { baseAssets, loading, selectedSymbol } =
+const { selectBaseCoin } = instrumentInfoStore;
+const { baseCoinList, loading, selectedBaseCoin } =
   storeToRefs(instrumentInfoStore);
 </script>
 
 <template>
   <Select
-    :value="selectedSymbol"
-    :defaultValue="selectedSymbol"
-    @change="event => selectSymbol(event.value)"
-    :options="baseAssets"
-    optionLabel="baseCoin"
+    :modelValue="selectedBaseCoin"
+    :defaultValue="selectedBaseCoin"
+    @change="event => selectBaseCoin(event.value)"
+    :options="baseCoinList"
     size="small"
     placeholder="Base"
     :loading="loading"

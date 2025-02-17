@@ -33,7 +33,7 @@ export const useOrdersStore = defineStore('ordersStore', () => {
     const symbolsObject = new Set();
     orders.value.forEach(order => {
       symbolsObject.add({
-        baseAsset: order.symbol.split('USDT')[0],
+        baseCoin: order.symbol.split('USDT')[0],
         symbol: order.symbol,
       });
     });

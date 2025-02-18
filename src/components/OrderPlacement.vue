@@ -101,46 +101,6 @@ const calculatedStopLoss = computed(() => {
   return formatToPrecision(priceLevel, precision);
 });
 
-// const takeProfitGrid = computed(() => {
-//   const maxGridSize = 10; // Maximum allowed orders
-
-//   // Validate stepPercent (must be between 1 and 100)
-//   if (
-//     typeof settings.gridStep.value !== 'number' ||
-//     settings.gridStep.value < 1 ||
-//     settings.gridStep.value > 100
-//   ) {
-//     throw new Error('stepPercent must be a number between 1 and 100.');
-//   }
-
-//   // Validate orders (must be between 1 and maxOrders)
-//   if (
-//     typeof settings.gridSize.value !== 'number' ||
-//     settings.gridSize.value < 1 ||
-//     settings.gridSize.value > maxGridSize
-//   ) {
-//     throw new Error(`orders must be a number between 1 and ${maxGridSize}.`);
-//   }
-
-//   // Generate percentage grid
-//   return Array.from({ length: settings.gridSize.value }, (_, i) =>
-//     parseFloat((settings.gridStep.value * (i + 1)).toFixed(0))
-//   );
-// });
-
-// const calculateTakeProfitPrice = takeProfitFactor => {
-//   if (!price.value || !selectedInstrument.value) return null;
-//   const isTakeProfit = true;
-//   const precision = selectedInstrument.value.priceFilter.tickSize;
-//   const priceLevel = calculatePriceLevel(
-//     price.value,
-//     calculateTotalFactor([takeProfitFactor, settings.coefExtra.value]),
-//     isLong.value,
-//     isTakeProfit
-//   );
-//   return formatToPrecision(priceLevel, precision);
-// };
-
 const order = computed(() => {
   return {
     symbol: selectedInstrument.value.symbol,
@@ -153,27 +113,6 @@ const order = computed(() => {
     tpslMode: 'Full',
   };
 });
-
-// const takeProfit = computed(() => {
-//   try {
-//     return takeProfitGrid.value.map(takeProfitFactor => {
-//       return {
-//         symbol: selectedInstrument.value.symbol,
-//         side: isLong.value ? 'Buy' : 'Sell',
-//         qty: quantity.value.toString(),
-//         price: price.value.toString(),
-//         takeProfit: calculateTakeProfitPrice(takeProfitFactor),
-//         stopLoss: stopLoss.value.toString(),
-//         category: 'linear',
-//         orderType: 'Limit',
-//         tpslMode: 'Full',
-//       };
-//     });
-//   } catch (e) {
-//     console.error('Error while composing orders batch', e);
-//     return null;
-//   }
-// });
 
 const sendOrder = async () => {
   if (!order.value) {
@@ -240,10 +179,15 @@ watch(price, () => {
           offLabel="Short"
           class="w-20"
         />
+        <PlaceTakeProfitGrid :is-long="isLong" />
+        <Button label="Close" size="small" severity="secondary" />
+      </div>
+      <div class="flex flex-row">
         <Button
-          label="Orders"
-          size="small"
-          severity="secondary"
+          icon="pi pi-shopping-cart"
+          severity="contrast"
+          variant="text"
+          rounded
           @click="
             router.push({
               name: 'orders',
@@ -251,9 +195,6 @@ watch(price, () => {
             })
           "
         />
-        <PlaceTakeProfitGrid />
-      </div>
-      <div class="flex flex-row">
         <Button
           @click="resetOrder"
           icon="pi pi-refresh"

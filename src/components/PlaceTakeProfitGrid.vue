@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { computed } from 'vue';
 import { Button } from 'primevue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 import { useMarginSettingsStore } from '@/stores/marginSettingsStore';
@@ -14,12 +14,14 @@ import {
 import ByBit from '@/api/ByBit';
 import { useToast } from 'primevue';
 
+const props = defineProps({
+  isLong: Boolean,
+});
+
 // ----------------------------
 // Services
 // ----------------------------
 const toast = useToast();
-
-const isLong = ref(true);
 
 const instrumentInfoStore = useInstrumentInfoStore();
 const marginSettingsStore = useMarginSettingsStore();
@@ -28,9 +30,18 @@ const { selectedInstrument, selectedSymbol } = storeToRefs(instrumentInfoStore);
 const { positionInfo } = storeToRefs(positionInfoStore);
 const settings = storeToRefs(marginSettingsStore);
 
+const positionSide = computed(() => {
+  return props.isLong ? 'Buy' : 'Sell';
+});
+
+const takeProfitSide = computed(() => {
+  return props.isLong ? 'Sell' : 'Buy';
+});
+
 const selectedSymbolPosition = computed(() => {
+  if (!positionInfo.value) return null;
   return positionInfo.value.find(({ symbol, side }) => {
-    return symbol === selectedSymbol.value && side === 'Buy';
+    return symbol === selectedSymbol.value && side === positionSide.value;
   });
 });
 
@@ -68,7 +79,7 @@ const calculateSellPrice = takeProfitFactor => {
   const priceLevel = calculatePriceLevel(
     selectedSymbolPosition.value.avgPrice,
     calculateTotalFactor([takeProfitFactor, settings.coefExtra.value]),
-    isLong.value,
+    props.isLong,
     isTakeProfit
   );
   return formatToPrecision(priceLevel, precision);
@@ -79,7 +90,7 @@ const orders = computed(() => {
     return takeProfitGrid.value.map(takeProfitFactor => {
       return {
         symbol: selectedInstrument.value.symbol,
-        side: 'Sell',
+        side: takeProfitSide.value,
         qty: calculateGridQty({
           fullQty: selectedSymbolPosition.value.size,
           lotSizeFilter: selectedInstrument.value.lotSizeFilter,
@@ -136,5 +147,6 @@ const placeTakeProfitOrders = async () => {
     @click="placeTakeProfitOrders"
     outlined
     size="small"
+    :disabled="!selectedSymbolPosition"
   />
 </template>

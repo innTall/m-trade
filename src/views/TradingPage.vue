@@ -5,7 +5,7 @@ import KlinesChart from '@/components/KlinesChart.vue';
 import OrderPlacement from '@/components/OrderPlacement.vue';
 import ActiveSymbols from '@/components/ActiveSymbols.vue';
 import BottomMenu from '@/components/BottomMenu.vue';
-import { useInstrumentInfoStore } from '../stores/instrumentInfoStore';
+import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 import { storeToRefs } from 'pinia';
 
 const route = useRoute();

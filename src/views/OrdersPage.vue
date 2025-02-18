@@ -74,12 +74,13 @@ const openPosition = pos => {
       </div>
       <div>
         <Button
+          v-if="baseCoin"
           label="Cancel All"
           icon="pi pi-times"
           variant="text"
           severity="danger"
           @click="cancellAllOrders"
-          :disabled="!baseCoin"
+          :disabled="selectedInstrumentOrders.length === 0"
         />
       </div>
     </div>

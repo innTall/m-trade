@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, watch } from 'vue';
+import { onMounted, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import KlinesChart from '@/components/KlinesChart.vue';
 import OrderPlacement from '@/components/OrderPlacement.vue';
@@ -14,11 +14,15 @@ const router = useRouter();
 const instrumentInfoStore = useInstrumentInfoStore();
 const { selectedBaseCoin } = storeToRefs(instrumentInfoStore);
 
+const baseCoin = computed(() => {
+  return route.query.baseCoin;
+});
+
 watch(
   () => route.query,
   (newValue, oldValue) => {
     if (newValue.baseCoin !== oldValue.baseCoin)
-      instrumentInfoStore.selectBaseCoin(route.query.baseCoin);
+      instrumentInfoStore.selectBaseCoin(baseCoin.value);
   }
 );
 
@@ -27,7 +31,8 @@ watch(selectedBaseCoin, (newValue, oldValue) => {
 });
 
 onMounted(() => {
-  instrumentInfoStore.selectBaseCoin(route.query.baseCoin);
+  if (baseCoin.value)
+    return instrumentInfoStore.selectBaseCoin(route.query.baseCoin);
 });
 </script>
 

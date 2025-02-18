@@ -46,6 +46,7 @@ export const usePositionInfoStore = defineStore('positionInfoStore', () => {
   });
 
   return {
+    positionInfo,
     openPositionsWithPnl,
     fetchPositionInfo,
   };

@@ -1,6 +1,6 @@
 import fetchWrapper from './fetchWrapper';
 // https://bybit-exchange.github.io/docs/v5/order/realtime
-export default async function getOrders() {
+export default async function getOpenOrders() {
   const path = '/order/realtime';
   const query = `category=linear&settleCoin=USDT`;
   const data = await fetchWrapper({

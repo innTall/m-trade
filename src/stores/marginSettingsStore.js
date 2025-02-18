@@ -2,7 +2,7 @@ import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
 export const useMarginSettingsStore = defineStore(
-  'marginSettings',
+  'marginSettingsStore',
   () => {
     const leverage = ref(10);
     const coefRisk = ref(2);

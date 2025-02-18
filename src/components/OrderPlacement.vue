@@ -10,7 +10,7 @@ import {
 } from 'primevue';
 import MarginSettings from './MarginSettings.vue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
-import { useMarginSettingsStore } from '@/stores/marginSettings';
+import { useMarginSettingsStore } from '@/stores/marginSettingsStore';
 import { useAccountStore } from '@/stores/accountStore';
 import {
   calculateTotalFactor,
@@ -21,6 +21,7 @@ import {
 import ByBit from '@/api/bybit';
 import { useToast } from 'primevue/usetoast';
 import { useRouter } from 'vue-router';
+import PlaceTakeProfitGrid from './PlaceTakeProfitGrid.vue';
 
 // ----------------------------
 // Services
@@ -250,6 +251,7 @@ watch(price, () => {
             })
           "
         />
+        <PlaceTakeProfitGrid />
       </div>
       <div class="flex flex-row">
         <Button

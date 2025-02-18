@@ -14,7 +14,7 @@ const toast = useToast();
 const route = useRoute();
 
 const ordersStore = useOrdersStore();
-const { orders } = storeToRefs(ordersStore);
+const { openOrders } = storeToRefs(ordersStore);
 
 const position = ref('center');
 const visible = ref(false);
@@ -24,8 +24,8 @@ const baseCoin = computed(() => {
 });
 
 const selectedInstrumentOrders = computed(() => {
-  if (!baseCoin.value) return orders.value;
-  return orders.value.filter(order => order.baseCoin === baseCoin.value);
+  if (!baseCoin.value) return openOrders.value;
+  return openOrders.value.filter(order => order.baseCoin === baseCoin.value);
 });
 
 const showSuccess = () => {
@@ -50,14 +50,14 @@ const cancelOrder = async orderId => {
   const isCanceled = await ByBit.cancelOrder(orderId);
   if (!isCanceled) showError();
   showSuccess();
-  await ordersStore.fetchOrders();
+  await ordersStore.fetchOpenOrders();
 };
 
 const cancellAllOrders = async () => {
   const isCanceled = await ByBit.cancelAllOrders(baseCoin);
   if (!isCanceled) return showError();
   showSuccess();
-  await ordersStore.fetchOrders();
+  await ordersStore.fetchOpenOrders();
 };
 
 const openPosition = pos => {

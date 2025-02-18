@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useMarginSettingsStore } from '@/stores/marginSettings.js';
+import { useMarginSettingsStore } from '@/stores/marginSettingsStore.js';
 import { useAccountStore } from '@/stores/accountStore';
 
 const { leverage, coefRisk, coefSL } = storeToRefs(useMarginSettingsStore());

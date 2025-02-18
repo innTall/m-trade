@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import { Button, Dialog, Divider, InputNumber } from 'primevue';
 import { storeToRefs } from 'pinia';
-import { useMarginSettingsStore } from '@/stores/marginSettings.js';
+import { useMarginSettingsStore } from '@/stores/marginSettingsStore.js';
 
 const { leverage, coefRisk, coefSL, coefExtra, gridSize, gridStep } =
   storeToRefs(useMarginSettingsStore());

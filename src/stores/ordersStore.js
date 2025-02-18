@@ -3,22 +3,21 @@ import { defineStore } from 'pinia';
 import ByBit from '@/api/bybit'; // Adjust the import path to your `getSymbols` function
 
 export const useOrdersStore = defineStore('ordersStore', () => {
-  const orders = ref([]);
+  const openOrders = ref([]);
   const loading = ref(false);
   const error = ref(null);
 
   // Actions
-  const fetchOrders = async () => {
+  const fetchOpenOrders = async () => {
     loading.value = true;
     error.value = null;
 
     try {
-      const result = await ByBit.getOrders();
+      const result = await ByBit.getOpenOrders();
       if (result) {
-        console.log(result);
-        orders.value = result;
+        openOrders.value = result;
       } else {
-        orders.value = [];
+        openOrders.value = [];
         error.value = 'No position info found.';
       }
     } catch (err) {
@@ -29,10 +28,10 @@ export const useOrdersStore = defineStore('ordersStore', () => {
   };
 
   const symbolsWithOpenOrders = computed(() => {
-    if (!orders.value) return [];
+    if (!openOrders.value) return [];
     // Extract unique symbols where order status is open
     const symbolsObject = new Set();
-    orders.value.forEach(order => {
+    openOrders.value.forEach(order => {
       symbolsObject.add({
         baseCoin: order.symbol.split('USDT')[0],
         symbol: order.symbol,
@@ -43,15 +42,15 @@ export const useOrdersStore = defineStore('ordersStore', () => {
   });
 
   onMounted(async () => {
-    await fetchOrders();
+    await fetchOpenOrders();
     setInterval(async () => {
-      await fetchOrders();
+      await fetchOpenOrders();
     }, 30000);
   });
 
   return {
-    orders,
+    openOrders,
     symbolsWithOpenOrders,
-    fetchOrders,
+    fetchOpenOrders,
   };
 });

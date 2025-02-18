@@ -19,16 +19,25 @@ import { storeToRefs } from 'pinia';
  * -> [ { "symbol": "ETH", "unrealisedPnl": "0" }, { "symbol": "BTC", "unrealisedPnl": "25.822" } ]
  */
 const mergeArrays = (mainArray, pnlArray) => {
-  // Convert pnlArray into a Map for quick lookup
+  // Convert pnlArray into a Map for quick lookup using `symbol`
   const pnlMap = new Map(
-    pnlArray.map(item => [item.baseCoin, item.unrealisedPnl])
+    pnlArray.map(item => [item.symbol, item.unrealisedPnl])
   );
 
-  // Merge the two arrays
-  return mainArray.map(item => ({
-    ...item,
-    unrealisedPnl: pnlMap.get(item.baseCoin) || '0', // Default to "0" if no match
-  }));
+  // Use a Map to ensure unique symbols from the mainArray
+  const resultMap = new Map();
+
+  for (const item of mainArray) {
+    if (!resultMap.has(item.symbol)) {
+      resultMap.set(item.symbol, {
+        ...item,
+        unrealisedPnl: pnlMap.get(item.symbol) || '0', // Default to "0" if no match
+      });
+    }
+  }
+
+  // Convert the map values back to an array
+  return Array.from(resultMap.values());
 };
 
 const positionInfoStore = usePositionInfoStore();

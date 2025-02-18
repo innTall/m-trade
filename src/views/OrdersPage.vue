@@ -25,7 +25,9 @@ const baseCoin = computed(() => {
 
 const selectedInstrumentOrders = computed(() => {
   if (!baseCoin.value) return openOrders.value;
-  return openOrders.value.filter(order => order.baseCoin === baseCoin.value);
+  return openOrders.value.filter(
+    order => order.symbol === `${baseCoin.value}USDT`
+  );
 });
 
 const showSuccess = () => {

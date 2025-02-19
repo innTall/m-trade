@@ -8,7 +8,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   const loading = ref(false);
   const error = ref(null);
   const selectedQuoteCoin = ref('USDT'); //default
-  const selectedBaseCoin = ref('BTC'); //default
+  const selectedBaseCoin = ref(null);
 
   // Actions
   const fetchInstrumentInfo = async () => {
@@ -48,6 +48,7 @@ export const useInstrumentInfoStore = defineStore('instrumentInfoStore', () => {
   });
 
   const selectedSymbol = computed(() => {
+    if (!selectedBaseCoin.value) return null;
     return `${selectedBaseCoin.value}${selectedQuoteCoin.value}`;
   });
 

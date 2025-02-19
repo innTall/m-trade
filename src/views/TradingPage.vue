@@ -15,7 +15,7 @@ const instrumentInfoStore = useInstrumentInfoStore();
 const { selectedBaseCoin } = storeToRefs(instrumentInfoStore);
 
 const baseCoin = computed(() => {
-  return route.query.baseCoin;
+  return route.query.baseCoin || 'BTC';
 });
 
 watch(
@@ -31,8 +31,7 @@ watch(selectedBaseCoin, (newValue, oldValue) => {
 });
 
 onMounted(() => {
-  if (baseCoin.value)
-    return instrumentInfoStore.selectBaseCoin(route.query.baseCoin);
+  if (baseCoin.value) return instrumentInfoStore.selectBaseCoin(baseCoin.value);
 });
 </script>
 

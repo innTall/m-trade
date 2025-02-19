@@ -5,13 +5,14 @@ import { Button, Dialog, InputNumber, Divider } from 'primevue';
 import { useOrdersStore } from '@/stores/ordersStore';
 import ByBit from '@/api/bybit';
 import { useToast } from 'primevue/usetoast';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 
 // ----------------------------
 // Services
 // ----------------------------
 const toast = useToast();
 const route = useRoute();
+const router = useRouter();
 
 const ordersStore = useOrdersStore();
 const { openOrders } = storeToRefs(ordersStore);
@@ -70,11 +71,21 @@ const openPosition = pos => {
 
 <template>
   <div>
-    <div class="flex justify-between items-center p-2">
+    <div class="grid grid-cols-3 items-center p-1">
       <div>
-        <h2 class="text-xl font-bold">Orders</h2>
+        <Button
+          label="Back"
+          icon="pi pi-arrow-left"
+          size="small"
+          severity="contrast"
+          variant="text"
+          @click="router.go(-1)"
+        />
       </div>
       <div>
+        <div class="text-xl text-center">Orders</div>
+      </div>
+      <div class="text-end">
         <Button
           v-if="baseCoin"
           label="Cancel All"
@@ -83,6 +94,7 @@ const openPosition = pos => {
           severity="danger"
           @click="cancellAllOrders"
           :disabled="selectedInstrumentOrders.length === 0"
+          size="small"
         />
       </div>
     </div>

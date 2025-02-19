@@ -6,6 +6,7 @@ import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
 import SelectBaseAsset from './SelectBaseCoin.vue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
+import formatToPrecision from '../helpers/formatToPrecission';
 
 // Function to initialize the WebSocket connection
 const initKlinesWebSocket = ({ symbol, interval, chart }) => {
@@ -59,67 +60,20 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
   };
 };
 
-// // Function to calculate support (lowest price)
-// function calculateSupport(data) {
-//   return Math.min(...data.map(d => d.low));
-// }
-
-// // Function to calculate resistance (highest price)
-// function calculateResistance(data) {
-//   return Math.max(...data.map(d => d.high));
-// }
-
-// // Function to calculate average closing price
-// function calculateAverageClose(data) {
-//   const total = data.reduce((sum, d) => sum + d.close, 0);
-//   return total / data.length;
-// }
-
-// // Calculate dynamic price levels
-// const support = calculateSupport(parsedKlines);
-// const resistance = calculateResistance(parsedKlines);
-// const averageClose = calculateAverageClose(parsedKlines);
-
-// // Add horizontal lines dynamically
-// candlestickSeries.createPriceLine({
-//   price: support,
-//   color: 'red',
-//   lineWidth: 2,
-//   lineStyle: LineStyle.Dashed,
-//   axisLabelVisible: true,
-//   title: 'Support',
-// });
-
-// candlestickSeries.createPriceLine({
-//   price: resistance,
-//   color: 'green',
-//   lineWidth: 2,
-//   lineStyle: LineStyle.Solid,
-//   axisLabelVisible: true,
-//   title: 'Resistance',
-// });
-
-// candlestickSeries.createPriceLine({
-//   price: averageClose,
-//   color: 'blue',
-//   lineWidth: 2,
-//   lineStyle: LineStyle.Dotted,
-//   axisLabelVisible: true,
-//   title: 'Average Close',
-// });
-
 const instrumentInfoStore = useInstrumentInfoStore();
-const { selectedSymbol } = storeToRefs(instrumentInfoStore);
+const { selectedSymbol, selectedInstrument } = storeToRefs(instrumentInfoStore);
 const chartContainer = ref(0);
 const chartSettings = ref(0);
 const chartData = ref([]);
-const averagePriceLine = ref(null);
 const selectedInterval = ref('15');
 
 const wsUrl = 'wss://stream-testnet.bybit.com/v5/public/linear';
 let ws;
 let chart;
 let candlestickSeries;
+let averagePriceLine;
+let highPriceLine;
+let lowPriceLine;
 
 // ----------------------------
 // Chart
@@ -157,6 +111,19 @@ watch(chartContainer, (newValue, oldValue) => {
   }
 });
 
+// Update price format
+function updatePriceFormat(precision) {
+  // Customize the price formatter
+  chart.applyOptions({
+    localization: {
+      // Customize the price formatter
+      priceFormatter: price => {
+        return formatToPrecision(price, precision); // Show 8 decimal places
+      },
+    },
+  });
+}
+
 // Get and parse klines. Prepare for chart
 async function getKlines({ symbol, interval }) {
   // Fetch historical data for the new selection
@@ -180,20 +147,61 @@ function calculateAverageClose(data) {
   return total / data.length;
 }
 
+// Function to calculate high price (n% above average)
+function calculateHighPrice(data, percentAbove) {
+  const averageClose = calculateAverageClose(data);
+  return averageClose * (1 + percentAbove / 100);
+}
+
+// Function to calculate low price (n% below average)
+function calculateLowPrice(data, percentBelow) {
+  const averageClose = calculateAverageClose(data);
+  return averageClose * (1 - percentBelow / 100);
+}
+
 function addAveragePriceLine(klines) {
-  if (averagePriceLine.value) {
-    candlestickSeries.removePriceLine(averagePriceLine.value);
+  if (averagePriceLine) {
+    candlestickSeries.removePriceLine(averagePriceLine);
   }
 
-  averagePriceLine.value = {
+  averagePriceLine = candlestickSeries.createPriceLine({
     price: calculateAverageClose(klines.slice(0, 100)),
     color: 'blue',
     lineWidth: 2,
     lineStyle: LineStyle.Dotted,
     axisLabelVisible: true,
-    title: 'Average Close',
-  };
-  candlestickSeries.createPriceLine(averagePriceLine.value);
+    title: 'avg',
+  });
+}
+
+function addHighPriceLine(klines) {
+  if (highPriceLine) {
+    candlestickSeries.removePriceLine(highPriceLine);
+  }
+
+  highPriceLine = candlestickSeries.createPriceLine({
+    price: calculateHighPrice(klines.slice(0, 100), 1),
+    color: 'red',
+    lineWidth: 2,
+    lineStyle: LineStyle.Dotted,
+    axisLabelVisible: true,
+    title: 'high',
+  });
+}
+
+function addLowPriceLine(klines) {
+  if (lowPriceLine) {
+    candlestickSeries.removePriceLine(lowPriceLine);
+  }
+
+  lowPriceLine = candlestickSeries.createPriceLine({
+    price: calculateLowPrice(klines.slice(0, 100), 1),
+    color: 'green',
+    lineWidth: 2,
+    lineStyle: LineStyle.Dotted,
+    axisLabelVisible: true,
+    title: 'low',
+  });
 }
 
 onMounted(async () => {
@@ -202,9 +210,13 @@ onMounted(async () => {
     symbol: selectedSymbol.value,
     interval: selectedInterval.value,
   });
+  const precision = selectedInstrument.value.priceFilter.tickSize;
   chartData.value = klines;
   candlestickSeries.setData(klines);
   addAveragePriceLine(klines);
+  addHighPriceLine(klines);
+  addLowPriceLine(klines);
+  updatePriceFormat(precision);
   initKlinesWebSocket({
     symbol: selectedSymbol.value,
     interval: selectedInterval.value,
@@ -218,9 +230,13 @@ watch([selectedSymbol, selectedInterval], async ([newSymbol, newInterval]) => {
     symbol: newSymbol,
     interval: newInterval,
   });
+  const precision = selectedInstrument.value.priceFilter.tickSize;
   chartData.value = klines;
   candlestickSeries.setData(klines);
   addAveragePriceLine(klines);
+  addHighPriceLine(klines);
+  addLowPriceLine(klines);
+  updatePriceFormat(precision);
   initKlinesWebSocket({
     symbol: selectedSymbol.value,
     interval: selectedInterval.value,

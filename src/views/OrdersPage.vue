@@ -105,7 +105,8 @@ const openPosition = pos => {
         <div class="flex-grow">
           <div class="flex justify-between">
             <div class="px-2">
-              {{ order.side }} {{ order.orderType }} ({{ order.orderStatus }})
+              {{ order.symbol.split('USDT')[0] }} - {{ order.side }}
+              {{ order.orderType }} ({{ order.orderStatus }})
             </div>
             <div class="px-2">
               Price:

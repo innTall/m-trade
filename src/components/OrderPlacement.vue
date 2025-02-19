@@ -17,6 +17,7 @@ import {
   calculatePriceLevel,
   calculateOrderQty,
   formatToPrecision,
+  getDecimalPlaces,
 } from '../helpers';
 import ByBit from '@/api/bybit';
 import { useToast } from 'primevue/usetoast';
@@ -214,8 +215,7 @@ watch(price, () => {
             :defaultValue="calculatedOrderSize"
             inputId="positionSize"
             size="small"
-            :min="Number(selectedInstrument?.lotSizeFilter.minOrderAmt)"
-            :max="Number(selectedInstrument?.lotSizeFilter.maxOrderAmt)"
+            :min="Number(selectedInstrument?.lotSizeFilter.minNotionalValue)"
             showButtons
             fluid
           />
@@ -232,6 +232,11 @@ watch(price, () => {
             inputId="price"
             size="small"
             :step="Number(selectedInstrument?.priceFilter.tickSize)"
+            :min="Number(selectedInstrument?.priceFilter.minPrice)"
+            :max="Number(selectedInstrument?.priceFilter.maxPrice)"
+            :maxFractionDigits="
+              getDecimalPlaces(selectedInstrument?.priceFilter.tickSize || 0)
+            "
             showButtons
             fluid
           />
@@ -248,6 +253,12 @@ watch(price, () => {
             :defaultValue="calculatedStopLoss"
             inputId="stopLoss"
             size="small"
+            :step="Number(selectedInstrument?.priceFilter.tickSize)"
+            :min="Number(selectedInstrument?.priceFilter.minPrice)"
+            :max="Number(selectedInstrument?.priceFilter.maxPrice)"
+            :maxFractionDigits="
+              getDecimalPlaces(selectedInstrument?.priceFilter.tickSize || 0)
+            "
             showButtons
             fluid
           />

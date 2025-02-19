@@ -7,6 +7,7 @@ import getOpenOrders from './getOpenOrders';
 import setLeverage from './setLeverage';
 import cancelAllOrders from './cancelAllOrders';
 import getPositionInfo from './getPositionInfo';
+import placeOrderBatch from './placeOrderBatch';
 
 const ByBit = {
   getKlines,
@@ -18,6 +19,7 @@ const ByBit = {
   setLeverage,
   cancelAllOrders,
   getPositionInfo,
+  placeOrderBatch,
 };
 
 export default ByBit;

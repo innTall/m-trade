@@ -97,7 +97,6 @@ const orders = computed(() => {
           gridSize: settings.gridSize.value,
         }).gridQty.toString(),
         price: calculateSellPrice(takeProfitFactor),
-        category: 'linear',
         orderType: 'Limit',
         tpslMode: 'Full',
         reduceOnly: true,
@@ -129,11 +128,7 @@ const showError = () => {
 
 const placeTakeProfitOrders = async () => {
   try {
-    await Promise.all(
-      orders.value.map(order => {
-        return ByBit.placeOrder(order);
-      })
-    );
+    await ByBit.placeOrderBatch({ category: 'linear', request: orders.value });
     showSuccess();
   } catch {
     showError();

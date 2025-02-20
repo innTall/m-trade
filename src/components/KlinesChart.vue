@@ -67,7 +67,7 @@ const chartSettings = ref(0);
 const chartData = ref([]);
 const selectedInterval = ref('15');
 
-const wsUrl = 'wss://stream-testnet.bybit.com/v5/public/linear';
+const wsUrl = `wss://stream.bybit.com/public/linear`;
 let ws;
 let chart;
 let candlestickSeries;

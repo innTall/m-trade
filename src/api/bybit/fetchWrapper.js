@@ -1,7 +1,7 @@
 import APP_CONFIG from '@/config';
 import { prepareAuthHeaders } from './utils';
 
-const isTest = true;
+const isTest = false;
 // this should be from some secure storage
 const apiKey = APP_CONFIG.exchange.bybit.apiKey;
 const secretKey = APP_CONFIG.exchange.bybit.secretKey;

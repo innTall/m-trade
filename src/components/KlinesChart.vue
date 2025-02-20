@@ -205,7 +205,7 @@ function addLowPriceLine(klines) {
 }
 
 onMounted(async () => {
-  if (!selectedSymbol.value) return;
+  if (!selectedInstrument.value) return;
   const klines = await getKlines({
     symbol: selectedSymbol.value,
     interval: selectedInterval.value,
@@ -225,24 +225,28 @@ onMounted(async () => {
 });
 
 // Watchers for symbol and interval changes
-watch([selectedSymbol, selectedInterval], async ([newSymbol, newInterval]) => {
-  const klines = await getKlines({
-    symbol: newSymbol,
-    interval: newInterval,
-  });
-  const precision = selectedInstrument.value.priceFilter.tickSize;
-  chartData.value = klines;
-  candlestickSeries.setData(klines);
-  addAveragePriceLine(klines);
-  addHighPriceLine(klines);
-  addLowPriceLine(klines);
-  updatePriceFormat(precision);
-  initKlinesWebSocket({
-    symbol: selectedSymbol.value,
-    interval: selectedInterval.value,
-    chart: candlestickSeries,
-  });
-});
+watch(
+  [selectedInstrument, selectedInterval],
+  async ([newIntrument, newInterval]) => {
+    if (!newIntrument) return;
+    const klines = await getKlines({
+      symbol: newIntrument.symbol,
+      interval: newInterval,
+    });
+    const precision = selectedInstrument.value.priceFilter.tickSize;
+    chartData.value = klines;
+    candlestickSeries.setData(klines);
+    addAveragePriceLine(klines);
+    addHighPriceLine(klines);
+    addLowPriceLine(klines);
+    updatePriceFormat(precision);
+    initKlinesWebSocket({
+      symbol: selectedSymbol.value,
+      interval: selectedInterval.value,
+      chart: candlestickSeries,
+    });
+  }
+);
 
 onBeforeUnmount(() => {
   if (ws) {

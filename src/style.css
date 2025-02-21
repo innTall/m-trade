@@ -2,9 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --ground-background: var(--p-surface-0); /* Light mode background */
+  --text-color: var(--p-surface-900);
+  --text-secondary-color: var(--p-surface-500)
+}
+
+.app-dark {
+  --ground-background: var(--p-surface-900); /* Dark mode background */
+  --text-color: var(--p-surface-0);
+  --text-secondary-color: var(--p-surface-400)
+}
 
 html, body {
   height: 100%;
   margin: 0;
   padding: 0;
+  background: var(--ground-background);
+  color: var(--text-color);
 }

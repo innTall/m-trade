@@ -1,12 +1,18 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, watch } from 'vue';
 import { storeToRefs } from 'pinia';
-import { createChart, LineStyle } from 'lightweight-charts';
+import {
+  createChart,
+  LineStyle,
+  PriceScaleMode,
+  ColorType,
+} from 'lightweight-charts';
 import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
 import SelectBaseAsset from './SelectBaseCoin.vue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
 import formatToPrecision from '../helpers/formatToPrecission';
+import APP_CONFIG from '../config';
 
 // Function to initialize the WebSocket connection
 const initKlinesWebSocket = ({ symbol, interval, chart }) => {
@@ -66,8 +72,8 @@ const chartContainer = ref(0);
 const chartSettings = ref(0);
 const chartData = ref([]);
 const selectedInterval = ref('15');
-
-const wsUrl = `wss://stream.bybit.com/public/linear`;
+console.log(APP_CONFIG);
+const wsUrl = `${APP_CONFIG.exchange.bybit.ws}/public/linear`;
 let ws;
 let chart;
 let candlestickSeries;
@@ -75,31 +81,66 @@ let averagePriceLine;
 let highPriceLine;
 let lowPriceLine;
 
+const rootStyles = getComputedStyle(document.documentElement);
+const groundBackgroundColor = rootStyles
+  .getPropertyValue('--ground-background')
+  .trim();
+const textColor = rootStyles.getPropertyValue('--text-color').trim();
+const lineColor = rootStyles.getPropertyValue('--text-secondary-color').trim();
+const upColor = rootStyles.getPropertyValue('--p-green-500').trim();
+const downColor = rootStyles.getPropertyValue('--p-red-500').trim();
+const volatilityColors = rootStyles.getPropertyValue('--p-blue-500').trim();
+
 // ----------------------------
 // Chart
 // ----------------------------
 
 onMounted(() => {
   const chartDiv = document.getElementById('chart');
+
   chart = createChart(chartDiv, {
     width: chartDiv.clientWidth,
     height:
       chartContainer.value.clientHeight - chartSettings.value.clientHeight,
     layout: {
-      backgroundColor: '#ffffff',
-      textColor: '#000000',
+      background: {
+        type: ColorType.Solid,
+        color: groundBackgroundColor,
+      },
+      pixelRatio: window.devicePixelRatio,
+      textColor: textColor,
     },
     grid: {
       vertLines: {
-        color: '#eeeeee',
+        visible: false,
+        color: lineColor,
       },
       horzLines: {
-        color: '#eeeeee',
+        visible: false,
+        color: lineColor,
+      },
+    },
+    priceScale: {
+      mode: PriceScaleMode.Normal,
+      autoScale: true,
+      alignLabels: true,
+      borderVisible: false,
+      borderColor: '#000000',
+      scaleMargins: {
+        top: 0.1,
+        bottom: 0.2,
       },
     },
   });
 
   candlestickSeries = chart.addCandlestickSeries();
+  candlestickSeries.applyOptions({
+    upColor,
+    downColor,
+    wickUpColor: upColor,
+    wickDownColor: downColor,
+    borderVisible: false,
+  });
 });
 
 // Resize chart
@@ -113,7 +154,6 @@ watch(chartContainer, (newValue, oldValue) => {
 
 // Update price format
 function updatePriceFormat(precision) {
-  // Customize the price formatter
   chart.applyOptions({
     localization: {
       // Customize the price formatter
@@ -166,9 +206,9 @@ function addAveragePriceLine(klines) {
 
   averagePriceLine = candlestickSeries.createPriceLine({
     price: calculateAverageClose(klines.slice(0, 100)),
-    color: 'blue',
-    lineWidth: 2,
-    lineStyle: LineStyle.Dotted,
+    color: volatilityColors,
+    lineWidth: 1,
+    lineStyle: LineStyle.Solid,
     axisLabelVisible: true,
     title: 'avg',
   });
@@ -181,9 +221,9 @@ function addHighPriceLine(klines) {
 
   highPriceLine = candlestickSeries.createPriceLine({
     price: calculateHighPrice(klines.slice(0, 100), 1),
-    color: 'red',
-    lineWidth: 2,
-    lineStyle: LineStyle.Dotted,
+    color: volatilityColors,
+    lineWidth: 1,
+    lineStyle: LineStyle.Solid,
     axisLabelVisible: true,
     title: 'high',
   });
@@ -196,9 +236,9 @@ function addLowPriceLine(klines) {
 
   lowPriceLine = candlestickSeries.createPriceLine({
     price: calculateLowPrice(klines.slice(0, 100), 1),
-    color: 'green',
-    lineWidth: 2,
-    lineStyle: LineStyle.Dotted,
+    color: volatilityColors,
+    lineWidth: 1,
+    lineStyle: LineStyle.Solid,
     axisLabelVisible: true,
     title: 'low',
   });

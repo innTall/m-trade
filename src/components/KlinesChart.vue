@@ -11,6 +11,7 @@ import ByBit from '@/api/bybit';
 import SelectInteval from './SelectInteval.vue';
 import SelectBaseAsset from './SelectBaseCoin.vue';
 import { useInstrumentInfoStore } from '@/stores/instrumentInfoStore';
+import { useMarginSettingsStore } from '@/stores/marginSettingsStore';
 import formatToPrecision from '../helpers/formatToPrecission';
 import APP_CONFIG from '../config';
 
@@ -51,10 +52,11 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
           close: parseFloat(rawData.close),
         };
         chart.update(formattedData);
-        const volatiliyPrices = calculateVolatilityPrice(
-          formattedData.close,
-          1
-        );
+        const volatiliyPrices = calculateVolatilityPrice({
+          price: formattedData.close,
+          lowPercent: coefSL.value,
+          highPercent: gridStep.value,
+        });
         updateVolalatilityLines(volatiliyPrices);
       }
     } catch (error) {
@@ -73,6 +75,8 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
 
 const instrumentInfoStore = useInstrumentInfoStore();
 const { selectedSymbol, selectedInstrument } = storeToRefs(instrumentInfoStore);
+const marginSettingsStore = useMarginSettingsStore();
+const { coefSL, gridStep } = storeToRefs(marginSettingsStore);
 const chartContainer = ref(0);
 const chartSettings = ref(0);
 const chartData = ref([]);
@@ -82,7 +86,6 @@ const wsUrl = `${APP_CONFIG.exchange.bybit.ws}/public/linear`;
 let ws;
 let chart;
 let candlestickSeries;
-let averagePriceLine;
 let highPriceLine;
 let lowPriceLine;
 
@@ -188,67 +191,10 @@ async function getKlines({ symbol, interval }) {
     .sort((a, b) => a.time - b.time);
 }
 
-// Function to calculate average closing price
-function calculateAverageClose(data) {
-  const total = data.reduce((sum, d) => sum + d.close, 0);
-  return total / data.length;
-}
-
-// Function to calculate high price (n% above average)
-function calculateHighPrice(data, percentAbove) {
-  const averageClose = calculateAverageClose(data);
-  return averageClose * (1 + percentAbove / 100);
-}
-
-// Function to calculate low price (n% below average)
-function calculateLowPrice(data, percentBelow) {
-  const averageClose = calculateAverageClose(data);
-  return averageClose * (1 - percentBelow / 100);
-}
-
-function addAveragePriceLine(klines) {
-  if (averagePriceLine) {
-    candlestickSeries.removePriceLine(averagePriceLine);
-  }
-
-  averagePriceLine = candlestickSeries.createPriceLine({
-    price: calculateAverageClose(klines.slice(-100)),
-    color: volatilityColors,
-    lineWidth: 1,
-    lineStyle: LineStyle.Solid,
-  });
-}
-
-function addHighPriceLine(klines) {
-  if (highPriceLine) {
-    candlestickSeries.removePriceLine(highPriceLine);
-  }
-
-  highPriceLine = candlestickSeries.createPriceLine({
-    price: calculateHighPrice(klines.slice(-100), 1),
-    color: volatilityColors,
-    lineWidth: 1,
-    lineStyle: LineStyle.Dotted,
-  });
-}
-
-function addLowPriceLine(klines) {
-  if (lowPriceLine) {
-    candlestickSeries.removePriceLine(lowPriceLine);
-  }
-
-  lowPriceLine = candlestickSeries.createPriceLine({
-    price: calculateLowPrice(klines.slice(-100), 1),
-    color: volatilityColors,
-    lineWidth: 1,
-    lineStyle: LineStyle.Dotted,
-  });
-}
-
-function calculateVolatilityPrice(price, percent) {
+function calculateVolatilityPrice({ price, lowPercent, highPercent }) {
   return {
-    lowPrice: price * (1 - percent / 100),
-    highPrice: price * (1 + percent / 100),
+    lowPrice: price * (1 - lowPercent / 100),
+    highPrice: price * (1 + highPercent / 100),
   };
 }
 
@@ -282,9 +228,6 @@ onMounted(async () => {
   const precision = selectedInstrument.value.priceFilter.tickSize;
   chartData.value = klines;
   candlestickSeries.setData(klines);
-  // addAveragePriceLine(klines);
-  // addHighPriceLine(klines);
-  // addLowPriceLine(klines);
   updatePriceFormat(precision);
   initKlinesWebSocket({
     symbol: selectedSymbol.value,
@@ -305,9 +248,6 @@ watch(
     const precision = selectedInstrument.value.priceFilter.tickSize;
     chartData.value = klines;
     candlestickSeries.setData(klines);
-    // addAveragePriceLine(klines);
-    // addHighPriceLine(klines);
-    // addLowPriceLine(klines);
     updatePriceFormat(precision);
     initKlinesWebSocket({
       symbol: selectedSymbol.value,

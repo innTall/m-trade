@@ -51,6 +51,11 @@ const initKlinesWebSocket = ({ symbol, interval, chart }) => {
           close: parseFloat(rawData.close),
         };
         chart.update(formattedData);
+        const volatiliyPrices = calculateVolatilityPrice(
+          formattedData.close,
+          1
+        );
+        updateVolalatilityLines(volatiliyPrices);
       }
     } catch (error) {
       console.error('Failed to process WebSocket message:', error);
@@ -89,7 +94,9 @@ const textColor = rootStyles.getPropertyValue('--text-color').trim();
 const lineColor = rootStyles.getPropertyValue('--text-secondary-color').trim();
 const upColor = rootStyles.getPropertyValue('--p-green-500').trim();
 const downColor = rootStyles.getPropertyValue('--p-red-500').trim();
-const volatilityColors = rootStyles.getPropertyValue('--p-blue-500').trim();
+const volatilityColors = rootStyles
+  .getPropertyValue('--text-secondary-color')
+  .trim();
 
 // ----------------------------
 // Chart
@@ -209,8 +216,6 @@ function addAveragePriceLine(klines) {
     color: volatilityColors,
     lineWidth: 1,
     lineStyle: LineStyle.Solid,
-    axisLabelVisible: true,
-    title: 'avg',
   });
 }
 
@@ -223,9 +228,7 @@ function addHighPriceLine(klines) {
     price: calculateHighPrice(klines.slice(-100), 1),
     color: volatilityColors,
     lineWidth: 1,
-    lineStyle: LineStyle.Solid,
-    axisLabelVisible: true,
-    title: 'high',
+    lineStyle: LineStyle.Dotted,
   });
 }
 
@@ -238,9 +241,35 @@ function addLowPriceLine(klines) {
     price: calculateLowPrice(klines.slice(-100), 1),
     color: volatilityColors,
     lineWidth: 1,
-    lineStyle: LineStyle.Solid,
-    axisLabelVisible: true,
-    title: 'low',
+    lineStyle: LineStyle.Dotted,
+  });
+}
+
+function calculateVolatilityPrice(price, percent) {
+  return {
+    lowPrice: price * (1 - percent / 100),
+    highPrice: price * (1 + percent / 100),
+  };
+}
+
+function updateVolalatilityLines({ lowPrice, highPrice }) {
+  if (lowPriceLine || highPriceLine) {
+    candlestickSeries.removePriceLine(lowPriceLine);
+    candlestickSeries.removePriceLine(highPriceLine);
+  }
+
+  lowPriceLine = candlestickSeries.createPriceLine({
+    price: lowPrice,
+    color: volatilityColors,
+    lineWidth: 1,
+    lineStyle: LineStyle.Dotted,
+  });
+
+  highPriceLine = candlestickSeries.createPriceLine({
+    price: highPrice,
+    color: volatilityColors,
+    lineWidth: 1,
+    lineStyle: LineStyle.Dotted,
   });
 }
 
@@ -253,9 +282,9 @@ onMounted(async () => {
   const precision = selectedInstrument.value.priceFilter.tickSize;
   chartData.value = klines;
   candlestickSeries.setData(klines);
-  addAveragePriceLine(klines);
-  addHighPriceLine(klines);
-  addLowPriceLine(klines);
+  // addAveragePriceLine(klines);
+  // addHighPriceLine(klines);
+  // addLowPriceLine(klines);
   updatePriceFormat(precision);
   initKlinesWebSocket({
     symbol: selectedSymbol.value,
@@ -276,9 +305,9 @@ watch(
     const precision = selectedInstrument.value.priceFilter.tickSize;
     chartData.value = klines;
     candlestickSeries.setData(klines);
-    addAveragePriceLine(klines);
-    addHighPriceLine(klines);
-    addLowPriceLine(klines);
+    // addAveragePriceLine(klines);
+    // addHighPriceLine(klines);
+    // addLowPriceLine(klines);
     updatePriceFormat(precision);
     initKlinesWebSocket({
       symbol: selectedSymbol.value,

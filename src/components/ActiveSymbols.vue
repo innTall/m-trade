@@ -51,7 +51,7 @@ const activeSymbols = computed(() => {
 });
 
 const getBadgeSeverity = unrealisedPnl => {
-  return parseInt(unrealisedPnl) > 0 ? 'success' : 'danger';
+  return parseFloat(unrealisedPnl) > 0 ? 'success' : 'danger';
 };
 </script>
 

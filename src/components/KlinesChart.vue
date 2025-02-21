@@ -72,8 +72,8 @@ const chartContainer = ref(0);
 const chartSettings = ref(0);
 const chartData = ref([]);
 const selectedInterval = ref('15');
-console.log(APP_CONFIG);
 const wsUrl = `${APP_CONFIG.exchange.bybit.ws}/public/linear`;
+
 let ws;
 let chart;
 let candlestickSeries;
@@ -205,7 +205,7 @@ function addAveragePriceLine(klines) {
   }
 
   averagePriceLine = candlestickSeries.createPriceLine({
-    price: calculateAverageClose(klines.slice(0, 100)),
+    price: calculateAverageClose(klines.slice(-100)),
     color: volatilityColors,
     lineWidth: 1,
     lineStyle: LineStyle.Solid,
@@ -220,7 +220,7 @@ function addHighPriceLine(klines) {
   }
 
   highPriceLine = candlestickSeries.createPriceLine({
-    price: calculateHighPrice(klines.slice(0, 100), 1),
+    price: calculateHighPrice(klines.slice(-100), 1),
     color: volatilityColors,
     lineWidth: 1,
     lineStyle: LineStyle.Solid,
@@ -235,7 +235,7 @@ function addLowPriceLine(klines) {
   }
 
   lowPriceLine = candlestickSeries.createPriceLine({
-    price: calculateLowPrice(klines.slice(0, 100), 1),
+    price: calculateLowPrice(klines.slice(-100), 1),
     color: volatilityColors,
     lineWidth: 1,
     lineStyle: LineStyle.Solid,

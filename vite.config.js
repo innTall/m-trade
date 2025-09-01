@@ -26,6 +26,8 @@ export default defineConfig({
         description: "application for trading",
         theme_color: "#000000",
         background_color: "#000000",
+        start_url: "/m-trade/", // important
+        scope: "/m-trade/", // important
         icons: [
           {
             src: "pwa-64x64.png",

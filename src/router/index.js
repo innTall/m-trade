@@ -1,18 +1,22 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import TradingPage from '../views/TradingPage.vue';
-import OrdersPage from '../views/OrdersPage.vue';
+import LongData from '../views/LongData.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/trading',
-      name: 'trading',
-      component: TradingPage,
+      path: '/',
+      name: 'LongData',
+      component: LongData,
     },
     {
-      path: '/orders',
-      name: 'orders',
-      component: OrdersPage,
+      path: '/shortData',
+      name: 'ShortData',
+      component: () => import('../views/ShortData.vue'),
+    },
+    {
+      path: '/testPage',
+      name: 'TestPage',
+      component: () => import('../views/TestPage.vue'),
     },
   ],
 });

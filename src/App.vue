@@ -1,9 +1,15 @@
 <script setup>
-import Toast from 'primevue/toast';
+import { RouterView } from "vue-router";
+import Navbar from "./components/Navbar.vue";
 </script>
 
 <template>
-  <Toast position="top-center" class="!px-8" />
-  <RouterView />
+  <div class="min-h-screen bg-gray-900 text-gray-100">
+    <!-- Main content -->
+    <RouterView />
+    <!-- Persistent navbar -->
+    <Navbar />
+  </div>
 </template>
+
 <style scoped></style>

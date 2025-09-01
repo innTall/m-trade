@@ -24,3 +24,4 @@ archive
 *.njsproj
 *.sln
 *.sw?
+.env

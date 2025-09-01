@@ -17,7 +17,7 @@ export default defineConfig({
         "favicon.png",
         "apple-touch-icon.png",
         "mask-icon.png",
-        "robots.txt",
+        "robots.txt"
       ],
 
       manifest: {
@@ -30,37 +30,38 @@ export default defineConfig({
           {
             src: "pwa-64x64.png",
             sizes: "64x64",
-            type: "image/png",
+            type: "image/png"
           },
           {
             src: "pwa-192x192.png",
             sizes: "192x192",
-            type: "image/png",
+            type: "image/png"
           },
           {
             src: "pwa-512x512.png",
             sizes: "512x512",
-            type: "image/png",
+            type: "image/png"
           },
           {
             src: "pwa-1024x1024.png",
             sizes: "1024x1024",
             type: "image/png",
-            purpose: "any",
+            purpose: "any"
           },
           {
             src: "mask-icon.png",
             sizes: "1024x1024",
             type: "image/png",
-            purpose: "maskable",
-          },
-        ],
+            purpose: "maskable"
+          }
+        ]
       },
 
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,png,ico,json}"],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
+        skipWaiting: true, // add this
         navigateFallback: "/m-trade/index.html",
         runtimeCaching: [
           {
@@ -70,12 +71,12 @@ export default defineConfig({
               cacheName: "api-cache",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 24 * 60 * 60, // 1 day
+                maxAgeSeconds: 24 * 60 * 60 // 1 day
               },
               cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
+                statuses: [0, 200]
+              }
+            }
           },
           {
             urlPattern: /\.(?:html|js|css|png|jpg|jpeg|svg|gif|ico|json)$/,
@@ -84,9 +85,9 @@ export default defineConfig({
               cacheName: "app-assets-cache",
               expiration: {
                 maxEntries: 1000,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-              },
-            },
+                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+              }
+            }
           },
           {
             urlPattern: /\/.*/,
@@ -95,30 +96,30 @@ export default defineConfig({
               cacheName: "navigation-cache",
               expiration: {
                 maxEntries: 50,
-                maxAgeSeconds: 7 * 24 * 60 * 60, // Cache for 7 days
-              },
-            },
-          },
+                maxAgeSeconds: 7 * 24 * 60 * 60 // Cache for 7 days
+              }
+            }
+          }
         ],
-        offlineGoogleAnalytics: false, // Disable if not used
+        offlineGoogleAnalytics: false // Disable if not used
       },
       devOptions: {
         enabled: process.env.NODE_ENV === "development",
         navigateFallback: "/m-trade/index.html",
-        suppressWarnings: true,
+        suppressWarnings: true
         //type: "module",
-      },
-    }),
+      }
+    })
   ],
   build: {
-    sourcemap: true, // Enable for better debugging in development
+    sourcemap: true // Enable for better debugging in development
   },
   define: {
-    __APP_VERSION__: JSON.stringify(version), // Inject the version into the build
+    __APP_VERSION__: JSON.stringify(version) // Inject the version into the build
   },
   resolve: {
     alias: {
-      "@": fileURLToPath(new URL("./src", import.meta.url)),
-    },
-  },
+      "@": fileURLToPath(new URL("./src", import.meta.url))
+    }
+  }
 });

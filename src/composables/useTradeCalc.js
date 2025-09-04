@@ -12,7 +12,7 @@ export function useTradeCalc() {
   // --- Long ---
   const L1 = computed(() =>
     store.L6 != null && store.L7 != null
-      ? +(a4.value / (store.L6 - store.L7)).toFixed(3)
+      ? +(a4.value / (store.L6 - store.L7)).toFixed(4)
       : 0
   );
   const L2 = computed(() => +(L1.value * store.L6).toFixed(1));
@@ -39,7 +39,7 @@ export function useTradeCalc() {
   // --- Short ---
   const S1 = computed(() =>
     store.S7 != null && store.S6 != null
-      ? +(a4.value / (store.S7 - store.S6)).toFixed(3)
+      ? +(a4.value / (store.S7 - store.S6)).toFixed(4)
       : 0
   );
   const S2 = computed(() => +(S1.value * store.S6).toFixed(1));
